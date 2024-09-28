@@ -5,7 +5,9 @@ import HomePage from './components/JobFeed';
 function App() {
   return (
     <div className="App">
+
       <HomePage/>
+
     </div>
   );
 }
