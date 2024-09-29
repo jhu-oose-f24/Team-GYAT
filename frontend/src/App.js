@@ -1,12 +1,12 @@
 import logo from './logo.svg';
 import './App.css';
-import HomePage from './components/JobFeed';
+import JobFeed from './components/JobFeed';
 
 function App() {
   return (
     <div className="App">
 
-      <HomePage/>
+      <JobFeed/>
 
     </div>
   );
