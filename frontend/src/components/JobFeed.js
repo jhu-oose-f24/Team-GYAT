@@ -1,17 +1,38 @@
-import React from 'react';
+import * as React from 'react';
+import { styled } from '@mui/material/styles';
+import Grid from '@mui/material/Grid2';
+import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+import Job from './Job';
 
-const HomePage = () => {
+const JobFeed = () => {
   return (
-    <div>
-      <header>
-        <h1>My Simple React Home Page</h1>
-      </header>
-      <main>
-        <p>Welcome to my simple React home page! This is a basic example of a React project.</p>
-        <img src="https://via.placeholder.com/300" alt="Placeholder" />
-      </main>
-    </div>
+    <Grid 
+      container 
+      spacing={4} // Space between grid items
+      sx={{ marginTop: 5, paddingX: 2 }} // Margin top and horizontal padding
+    >
+      {/* Define the breakpoints for each grid item */}
+      <Grid item xs={12} sm={6} md={4} lg={3}> {/* Dynamically resizes based on screen size */}
+        <Job />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <Job />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <Job />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <Job />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <Job />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4} lg={3}>
+        <Job />
+      </Grid>
+    </Grid>
   );
 }
 
-export default HomePage;
+export default JobFeed;
