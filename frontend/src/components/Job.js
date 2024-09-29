@@ -7,12 +7,12 @@ import CardActionArea from '@mui/material/CardActionArea';
 
 const Job = () => {
     return (
-        <Card sx={{ width: '100%' }}>
+    <Card sx={{ width: '100%' }}>
       <CardActionArea>
         <CardMedia
           component="img"
           height="140"
-          image="/static/images/cards/contemplative-reptile.jpg"
+          image="/images/lizardd.webp"
           alt="green iguana"
         />
         <CardContent>
