@@ -1,20 +1,19 @@
 from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
-class job(db.Model):
+class Job(db.Model):
     __tablename__ = 'jobs'
 
     # Get information of the job
-    job_id = db.Column(db.String(80), primary_key=True)
+    job_id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120), nullable=False)
     status = db.Column(db.Enum('open', 'accepted', 'provider_done', 'requester_approved', 'finished'))
     price = db.Column(db.Float, nullable=False)
     smart_contract_address = db.Column(db.String(255))
-    provider_id = db.Column(db.String(80), db.ForeignKey('users.user_id'), nullable=False)
-    requester_id = db.Column(db.String(80), db.ForeignKey('users.user_id'), nullable=True)
+    provider_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
+    requester_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=True)
 
     # Constructor of Job
-    def __init__(self, job_id, provider_id, requester_id, title, status, price, smart_contract_address):
-        self.job_id = job_id
+    def __init__(self, provider_id, requester_id, title, status, price, smart_contract_address):
         self.provider_id = provider_id
         self.requester_id = requester_id
         self.title = title
