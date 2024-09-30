@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { ethers } from 'ethers';
-import HomePage from './components/JobFeed';
+import JobFeed from './components/JobFeed';
 
 function App() {
   const [account, setAccount] = useState(null);
@@ -33,17 +33,17 @@ function App() {
 
   return (
       <div className="App">
-      <h1>Ethereum Wallet Login</h1>
-      {account ? (
-          <div>
-            <p>Connected Account: {account}</p>
-          </div>
-          ) :
-          ( <p>Please connect your Ethereum wallet</p>)
-      }
-      <HomePage />
+        <h1>Ethereum Wallet Login</h1>
+        {account ? (
+            <div>
+              <p>Connected Account: {account}</p>
+            </div>
+            ) :
+            ( <p>Please connect your Ethereum wallet</p>)
+        }
+        <JobFeed/>
       </div>
-      );
+   );
 }
 
 export default App;
