@@ -6,7 +6,7 @@ class job(db.Model):
     # Get information of the job
     job_id = db.Column(db.String(80), primary_key=True)
     title = db.Column(db.String(120), nullable=False)
-    status = db.Column(db.Boolean, default=False)
+    status = db.Column(db.Enum('open', 'accepted', 'provider_done', 'requester_approved', 'finished'))
     price = db.Column(db.Float, nullable=False)
     smart_contract_address = db.Column(db.String(255))
     provider_id = db.Column(db.String(80), db.ForeignKey('users.user_id'), nullable=False)

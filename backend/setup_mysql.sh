@@ -50,13 +50,15 @@ CREATE TABLE IF NOT EXISTS Users (
 );
 
 CREATE TABLE IF NOT EXISTS Jobs (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    job_title VARCHAR(100),
+    job_id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(100),
+    status ENUM('open', 'accepted', 'provider_done', 'requester_approved', 'finished'),
+    price FLOAT,
+    smart_contract_address VARCHAR(255),
     requester_id INT,
     FOREIGN KEY (requester_id) REFERENCES Users(id),
     provider_id INT,
     FOREIGN KEY (provider_id) REFERENCES Users(id),
-    status ENUM('open', 'accepted', 'provider_done', 'requester_approved', 'finished')
 );
 "
 
