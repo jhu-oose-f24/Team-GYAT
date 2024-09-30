@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 class Job(db.Model):
-    __tablename__ = 'jobs'
+    __tablename__ = 'Jobs'
 
     # Get information of the job
     job_id = db.Column(db.Integer, primary_key=True)
@@ -9,8 +9,8 @@ class Job(db.Model):
     status = db.Column(db.Enum('open', 'accepted', 'provider_done', 'requester_approved', 'finished'))
     price = db.Column(db.Float, nullable=False)
     smart_contract_address = db.Column(db.String(255))
-    provider_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=False)
-    requester_id = db.Column(db.Integer, db.ForeignKey('users.user_id'), nullable=True)
+    provider_id = db.Column(db.Integer, db.ForeignKey('Users.user_id'), nullable=False)
+    requester_id = db.Column(db.Integer, db.ForeignKey('Users.user_id'), nullable=True)
 
     # Constructor of Job
     def __init__(self, provider_id, requester_id, title, status, price, smart_contract_address):

@@ -1,10 +1,11 @@
 import pymysql
 pymysql.install_as_MySQLdb()
 
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import inspect
 
+from User import User
 from Job import Job
 
 app = Flask(__name__)
@@ -20,6 +21,20 @@ def main():
     # verify table creation
     inspector = inspect(db.engine)
     return inspector.get_table_names()
+
+@app.route('/users', methods=['POST'])
+def create_user():
+    data = request.get_json()
+    new_user = User(
+        username = data['username'],
+        email = data['email']
+    )
+
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify(
+            {"message": "User created successfully",
+             "user_id": new_user.user_id}), 201
 
 @app.route('/jobs', methods=['POST'])
 def create_job():
