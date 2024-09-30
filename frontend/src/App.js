@@ -12,16 +12,17 @@ function App() {
   useEffect(() => {
       const initWallet = async () => {
         try {
+          // Get metamask info 
           const provider = new ethers.BrowserProvider(window.ethereum);
-          console.log(provider);
           await provider.send("eth_requestAccounts", []);
           setProvider(provider);
-
-          const signer = await  provider.getSigner();
+          
+          // Gets the account signer for transactions
+          const signer = await provider.getSigner();
           setSigner(signer);
-
+          
+          // Gets the public address of connected wallet
           const address = await signer.getAddress();
-          console.log(address);
           setAccount(address);
         } catch (error) {
           console.error('User denied account access', error);
