@@ -16,4 +16,7 @@ If this script has been run already from a previous session, there is no need to
 - `docker-compose up -d`
 
 To shut down the database at the end of a session:
-- `docker-compose down`. Optionally add `-v` flag to clear database memory, but the setup script will need to be run again to recreate the database schema. 
+- `docker-compose down`. Optionally add `-v` flag to clear database memory, but the setup script will need to be run again to recreate the database schema.
+
+## Known Bugs
+At the end of iteration 1, we were not able to finish all of the CRUD APIs for the backend. We can successfully create users, but creating jobs causes an error, as the `Users.user_id` foreign key is not recognized, and we did not have time to investigate this bug further. It will be competed in Iteration 2.
