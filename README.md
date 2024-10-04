@@ -20,3 +20,9 @@ To shut down the database at the end of a session:
 
 ## Known Bugs
 At the end of iteration 1, we were not able to finish all of the CRUD APIs for the backend. We can successfully create users, but creating jobs causes an error, as the `Users.user_id` foreign key is not recognized, and we did not have time to investigate this bug further. It will be competed in Iteration 2.
+
+## Running Frontend
+From Team-GYAT
+  - cd frontend
+  - npm install
+  - npm start

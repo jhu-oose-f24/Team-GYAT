@@ -194,5 +194,12 @@ must be prepared to explain how your app is different from the existing ones.
 Ethlance, LaborX, CanWork, DeFiHub, Upwork, Fiverr, Freelancer.com, Blackbear, 
 Superside, TopTal, Malt.
 
+A big difference between our project and the existing freelancing market places
+is that our is restricted to a certain user demographic, i.e Hopkins students.
+This means that job services targeted specifically for JHU students will be
+available and easily accessbile using our application. Additionally, our 
+application uses crypto-services for payment, eliminating the need for a middle
+entity to handle payments.
+
 
 
