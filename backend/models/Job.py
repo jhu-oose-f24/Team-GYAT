@@ -1,36 +1,34 @@
-from flask_sqlalchemy import SQLAlchemy
-db = SQLAlchemy()
+from app import db
+
 class Job(db.Model):
     __tablename__ = 'Jobs'
 
-    # Get information of the job
     job_id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120), nullable=False)
     status = db.Column(db.Enum('open', 'accepted', 'provider_done', 'requester_approved', 'finished'))
     price = db.Column(db.Float, nullable=False)
     smart_contract_address = db.Column(db.String(255))
-    provider_id = db.Column(db.Integer, db.ForeignKey('Users.user_id'), nullable=False)
-    requester_id = db.Column(db.Integer, db.ForeignKey('Users.user_id'), nullable=True)
 
-    # Constructor of Job
-    def __init__(self, provider_id, requester_id, title, status, price, smart_contract_address):
+    # foreign keys to reference users
+    requester_id = db.Column(db.Integer, db.ForeignKey('Users.user_id'))
+    provider_id = db.Column(db.Integer, db.ForeignKey('Users.user_id'))
+
+    def __init__(self, provider_id, title, status, price, smart_contract_address):
         self.provider_id = provider_id
-        self.requester_id = requester_id
+        self.requester_id = None
         self.title = title
         self.status = status
         self.price = price
         self.smart_contract_address = smart_contract_address
 
-    # Get job Details 
     def get_job_details(self) -> str:
         return f'Job ID: {self.job_id}, Title: {self.title}, Price: {self.price}'
 
-    # Get provider User Id
     def get_provider_id(self) -> str:
         return self.provider_id if self.provider_id else "No provider"
-    # Get requester User Id
+
     def get_requester_id(self) -> str:
         return self.requester_id if self.requester_id else "No requester"
-    # update job status
-    def update_job_status(self, status: bool) -> None:
+
+    def update_job_status(self, status: str) -> None:
         self.status = status
