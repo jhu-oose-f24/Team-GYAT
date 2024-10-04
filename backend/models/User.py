@@ -1,6 +1,4 @@
-from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
+from app import db
 
 class User(db.Model):
     __tablename__ = 'Users'
@@ -9,10 +7,10 @@ class User(db.Model):
     username = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String(255), nullable=False)
-    
-    # Relationships to Job
-    jobs_provided = db.relationship('Job', foreign_keys='Job.provider_id', backref='provider', lazy=True)
+
+    # declare relationships to jobs requested and provided
     jobs_requested = db.relationship('Job', foreign_keys='Job.requester_id', backref='requester', lazy=True)
+    jobs_provided = db.relationship('Job', foreign_keys='Job.provider_id', backref='provider', lazy=True)
 
     def __init__(self, username, email, password):
         self.username = username
