@@ -5,6 +5,7 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
+import { Link } from 'react-router-dom';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { styled, alpha } from '@mui/material/styles';
@@ -40,8 +41,20 @@ export default function NavBar() {
     <Box sx={{ flexGrow: 1}}>
       <AppBar position="static" sx = {{  bgcolor: '#68ACE5' }}>
         <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            JHU Marketplace
+          <Typography
+            variant="h6"
+            sx={{
+              flexGrow: 1,
+              '& a': {
+                color: 'inherit',
+                textDecoration: 'none',
+              },
+              '& a:hover': {
+                textDecoration: 'underline', 
+              },
+            }}
+          >
+            <Link to="/">JHU Marketplace</Link>
           </Typography>
           {walletAddress ? (
             <p>Signed in as {walletAddress.substr(0, 6)}...</p>
