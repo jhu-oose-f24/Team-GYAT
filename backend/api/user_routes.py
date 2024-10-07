@@ -1,3 +1,4 @@
+import re
 from flask import Blueprint, request, jsonify
 from models import db
 from models.User import User
@@ -68,3 +69,7 @@ def delete_user(user_id):
         return jsonify({"message": "User deleted successfully"})
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+
+def is_valid_email(potential_email) -> bool:
+    email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+    return re.match(email_regex, potential_email) is not None
