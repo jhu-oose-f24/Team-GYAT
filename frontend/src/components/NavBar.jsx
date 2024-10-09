@@ -6,6 +6,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { styled, alpha } from '@mui/material/styles';
@@ -13,7 +14,8 @@ import InputBase from '@mui/material/InputBase';
 
 export default function NavBar() {
   const [walletAddress, setWalletAddress] = React.useState("");
-  
+  const navigate = useNavigate();
+
   async function requestAccount() {
     if (window.ethereum) {
       try {
@@ -37,6 +39,10 @@ export default function NavBar() {
     }
   };
 
+  const profilePage = () => {
+    navigate('/userProfile');
+  };
+
   return (
     <Box sx={{ flexGrow: 1}}>
       <AppBar position="static" sx = {{  bgcolor: '#68ACE5' }}>
@@ -56,6 +62,7 @@ export default function NavBar() {
           >
             <Link to="/">JHU Marketplace</Link>
           </Typography>
+          <Button color="inherit" onClick={profilePage}> Profile</Button>
           {walletAddress ? (
             <p>Signed in as {walletAddress.substr(0, 6)}...</p>
             ) : (

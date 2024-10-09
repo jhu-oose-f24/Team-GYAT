@@ -1,12 +1,14 @@
 import React from 'react';
 import { useState } from 'react';
-
-class User {
-  constructor(userId, userName, email, password) {
+{/* Dummy user until backend functioning */}
+export class User {
+  constructor(userId, userName, email, password, fullName, year) {
     this.userId = userId;
     this.userName = userName;
     this.email = email;
     this.password = password;
+    this.fullName = fullName;
+    this.year = year;
     this.jobsProvided = [];
     this.jobsRequested = [];
   }
