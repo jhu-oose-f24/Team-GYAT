@@ -9,7 +9,7 @@ user_bp = Blueprint('user_bp', __name__)
 def create_user():
     data = request.get_json()
     try:
-        new_user = User(username=data['username'], email=data['email'], password=data['password'])
+        new_user = User(username=data['username'], fullname=data['fullname'], year=data['year'], email=data['email'], password=data['password'])
         db.session.add(new_user)
         db.session.commit()
         return jsonify({"message": "User created successfully", "user_id": new_user.user_id}), 201
@@ -20,7 +20,7 @@ def create_user():
 @user_bp.route('/users', methods=['GET'])
 def get_users():
     users = User.query.all()
-    result = [{'user_id': user.user_id, 'username': user.username, 'email': user.email} for user in users]
+    result = [{'user_id': user.user_id, 'username': user.username, 'fullname':user.fullname, 'year':user.year, 'email': user.email} for user in users]
     return jsonify(result)
 
 #ger single user by userid
@@ -29,7 +29,7 @@ def get_user(user_id):
     user = User.query.get(user_id)
     if not user:
         return jsonify({"error": "User not found"}), 404
-    user_data = {'user_id': user.user_id, 'username': user.username, 'email': user.email}
+    user_data = {'user_id': user.user_id, 'username': user.username, 'fullname':user.fullname, 'year':user.year, 'email': user.email}
     return jsonify(user_data)
 
 # update user profile
@@ -41,6 +41,12 @@ def update_user(user_id):
     data = request.get_json()
     if 'username' in data:
         user.username = data['username']
+    if 'fullname' in data:
+        user.fullname = data['fullname']
+    if 'year' in data:
+        if not is_valid_year(data['year']):
+            return jsonify({"error": "Invalid year format"}), 400
+        user.year = data['year']
     if 'email' in data:
         if not is_valid_email(data['email']):
             return jsonify({"error": "Invalid email format"}), 400
@@ -73,3 +79,7 @@ def delete_user(user_id):
 def is_valid_email(potential_email) -> bool:
     email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
     return re.match(email_regex, potential_email) is not None
+
+def is_valid_year(year):
+    # Check if the year is a 4-digit string and starts with '20'
+    return bool(re.match(r'^20\d{2}$', year))
