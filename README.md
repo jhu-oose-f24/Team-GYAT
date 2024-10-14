@@ -28,5 +28,43 @@ From Team-GYAT directory
 ## Smart Contract
 The `contract` directory holds the smart contract, which is also compiled and stored in `contract/artifacts`. The Remix online IDE has a testing framework, which will be used to ensure all functionality of the contract is working properly. From there, the `web3.py` framework will be used to create a contract from the backend, and `ether.js` will be used to interact with the contract for any following contract interactions.  
 
+## How to Create User
+Since we do not have login functionality setup we are creating a user through
+POSTMAN. 
+1. Creating a User
+POST URL:http://127.0.0.1:5000/users
+Headers: Content-Type: application/json
+Body(JSON): {
+    "username": "johndoe",
+    "fullname": "John Doe",
+    "year": "2024",
+    "email": "johndoe@example.com",
+    "password": "securepassword123"
+}
+2. Fetching all Users
+GET URL: http://127.0.0.1:5000/users
+
+3. Fetching Single User by ID
+*note make sure you have the right user id should be users/userID
+GET URL: http://127.0.0.1:5000/users/1
+  
+4. Updating a User
+PUT URL: http://127.0.0.1:5000/users/1
+Headers: Content-Type: application/json
+Body(JSON):{
+    "fullname": "Johnathan Doe",
+    "email": "johnathan.doe@example.com",
+    "year": "2025"
+}
+
+5. Deleting a User
+DELETE URL: http://127.0.0.1:5000/users/1
+
+User profile page can be viewed right now by clicking the button 'Profile'. Dummy
+information currently until we have login setup, which we are working on for
+next iteration. Currently have it setup so you can update username, fullname,
+year, and email, but might to choose to remove updating feature later. Will
+connect everything to backend after login setup.
+
 ## Known bugs
 ...
