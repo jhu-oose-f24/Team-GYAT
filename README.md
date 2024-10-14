@@ -20,7 +20,7 @@ To shut down the database at the end of a session:
 
 ## Frontend
 ### Setup
-From Team-GYAT
+From Team-GYAT directory
   - cd frontend
   - npm install
   - npm start
