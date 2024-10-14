@@ -6,16 +6,21 @@ import Typography from '@mui/material/Typography';
 import CardActionArea from '@mui/material/CardActionArea';
 import axios from 'axios';
 
-const Job = (jobId) => {
-    const jobData = await () => {
-      try {
-        const data = await axios.get(`http:/127.0.0.1:5000/jobs/${jobId}`);
-      } catch (err) {
-        console.log(err.message);
+const Job = ({jobId}) => {
+    const [jobData, setJobData] = React.useState([]);
+    React.useEffect(() => {
+    const fetchJobData = async () => {
+        try {
+          console.log(jobId);
+          const response = await axios.get(`http://127.0.0.1:5000/jobs/${jobId}`);
+          setJobData(response.data);
+        } catch (err) {
+          console.log(err.message);
+        }
       }
-
-    }
-
+      fetchJobData();
+    }, []);
+    console.log(jobData);
     return (
     <Card sx={{ width: '100%' }}>
       <CardActionArea>
@@ -27,7 +32,7 @@ const Job = (jobId) => {
         />
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
-            {{data.title}}
+            {jobData.title}
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
             Lizards are a widespread group of squamate reptiles, with over 6,000

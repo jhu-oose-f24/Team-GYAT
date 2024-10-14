@@ -21,8 +21,7 @@ const JobFeed = () => {
     }
     fetchJobs();
   }, []);
-  
-  console.log(jobs);
+
   return (
     <Box >
         <NavBar/>
@@ -32,7 +31,7 @@ const JobFeed = () => {
         >
         {jobs.map((item, index) => (
           <Grid size={{ xs: 2, sm: 4, md: 4 }}> 
-              <Job jobId=item.id/>
+              <Job jobId={item.job_id}/>
           </Grid>
         ))}
         </Grid>
