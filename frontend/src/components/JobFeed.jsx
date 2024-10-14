@@ -32,7 +32,7 @@ const JobFeed = () => {
         >
         {jobs.map((item, index) => (
           <Grid size={{ xs: 2, sm: 4, md: 4 }}> 
-              <Job />
+              <Job jobId=item.id/>
           </Grid>
         ))}
         </Grid>
