@@ -10,6 +10,7 @@ def create_job():
     try:
         new_job = Job(
             title=data['title'],
+            description=data['description'],
             status=data['status'],
             price=data['price'],
             smart_contract_address=data.get('smart_contract_address', None),
@@ -32,6 +33,7 @@ def get_jobs():
     result = [{
         'job_id': job.job_id,
         'title': job.title,
+        'description': job.description,
         'status': job.status,
         'price': job.price,
         'smart_contract_address': job.smart_contract_address,
@@ -47,6 +49,7 @@ def get_open_jobs():
     result = [{
         'job_id': job.job_id,
         'title': job.title,
+        'description': job.description,
         'status': job.status,
         'price': job.price,
         'smart_contract_address': job.smart_contract_address,
@@ -65,6 +68,7 @@ def get_job(job_id):
     job_data = {
         'job_id': job.job_id,
         'title': job.title,
+        'description': job.description,
         'status': job.status,
         'price': job.price,
         'smart_contract_address': job.smart_contract_address,
