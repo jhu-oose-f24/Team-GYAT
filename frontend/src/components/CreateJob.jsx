@@ -14,24 +14,32 @@ function CreateJob() {
         event.preventDefault();
         setIsSubmitting(true);
 
-        const formData = new FormData();
-        formData.append('title', jobTitle);
-        formData.append('description', jobDescription);
-        formData.append('photo', jobPhoto);
-        formData.append('price', jobPrice);
+        const jobData = {
+            title: jobTitle,
+            price: jobPrice,
+            status: 'open',
+            provider_id: 1,
+        };
 
         try {
-            const response = await fetch('YOUR_BACKEND_ENDPOINT_URL', {
+            const response = await fetch('http://127.0.0.1:5000/jobs', {
                 method: 'POST',
-                body: formData,
                 headers: {
-                    
+                    'Content-Type': 'application/json',
                 },
+                body: JSON.stringify(jobData),
             });
 
             if (response.ok) {
                 // Handle successful response
                 console.log('Job created successfully');
+
+                // Clear the form fields
+                setJobTitle('');
+                setJobDescription('');
+                setJobPhoto(null);
+                setJobPrice('');
+                setFileName('');
             } else {
                 // Handle errors
                 console.error('Error creating job');
