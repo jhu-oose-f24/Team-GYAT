@@ -1,7 +1,7 @@
 # Team-GYAT
 
 ## Backend 
-### Server
+### Server Setup
 The `flask` framework is used for the server, which interacts with the database using `SQLAlchemy`.
 
 Make sure to run 'pip3 install -r requirements.txt' before running the backend.
