@@ -72,7 +72,7 @@ connect everything to backend after login setup.
 
 ## Creating Job/Service
 On the Navigation Bar of our app, there is a "Become a Seller" button
-Click on it, and fill out the fields there to create a service, and it 
+Click on it, and fill out the fields there to post your job/service, and it 
 should be displayed on the job feed now when clicking navigating back
 to the main page.
 
