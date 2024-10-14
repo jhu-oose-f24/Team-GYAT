@@ -18,11 +18,15 @@ If this script has been run already from a previous session, there is no need to
 To shut down the database at the end of a session:
 - `docker-compose down`. Optionally add `-v` flag to clear database memory, but the setup script will need to be run again to recreate the database schema.
 
-## Known Bugs
-At the end of iteration 1, we were not able to finish all of the CRUD APIs for the backend. We can successfully create users, but creating jobs causes an error, as the `Users.user_id` foreign key is not recognized, and we did not have time to investigate this bug further. It will be competed in Iteration 2.
-
-## Running Frontend
+## Frontend
+### Setup
 From Team-GYAT
   - cd frontend
   - npm install
   - npm start
+
+## Smart Contract
+The `contract` directory holds the smart contract, which is also compiled and stored in `contract/artifacts`. The Remix online IDE has a testing framework, which will be used to ensure all functionality of the contract is working properly. From there, the `web3.py` framework will be used to create a contract from the backend, and `ether.js` will be used to interact with the contract for any following contract interactions.  
+
+## Known bugs
+...
