@@ -16,6 +16,7 @@ function CreateJob() {
 
         const jobData = {
             title: jobTitle,
+            description: jobDescription,
             price: jobPrice,
             status: 'open',
             provider_id: 1,

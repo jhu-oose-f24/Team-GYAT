@@ -55,6 +55,7 @@ CREATE TABLE IF NOT EXISTS Users (
 CREATE TABLE IF NOT EXISTS Jobs (
     job_id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(100),
+    description VARCHAR(400),
     status ENUM('open', 'accepted', 'provider_done', 'requester_approved', 'finished'),
     price FLOAT,
     smart_contract_address VARCHAR(255),
