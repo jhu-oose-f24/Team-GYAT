@@ -5,6 +5,8 @@ class User(db.Model):
 
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(100), nullable=False)
+    fullname = db.Column(db.String(100), nullable=False)
+    year = db.Column(db.String(4), nullable=True)
     email = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String(255), nullable=False)
 
@@ -12,10 +14,13 @@ class User(db.Model):
     jobs_requested = db.relationship('Job', foreign_keys='Job.requester_id', backref='requester', lazy=True)
     jobs_provided = db.relationship('Job', foreign_keys='Job.provider_id', backref='provider', lazy=True)
 
-    def __init__(self, username, email, password):
+    def __init__(self, username, fullname, year, email, password):
         self.username = username
+        self.fullname = fullname
+        self.year = year
         self.email = email
         self.password = password
+
 
     def get_user_id(self):
         return self.user_id
