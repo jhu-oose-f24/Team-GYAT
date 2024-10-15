@@ -1,6 +1,9 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, url_for
 from models import db
 from models.Job import Job
+from utils.image_utils import save_image_from_base64
+from sqlalchemy.exc import SQLAlchemyError
+
 
 job_bp = Blueprint('job_bp', __name__)
 
@@ -8,17 +11,33 @@ job_bp = Blueprint('job_bp', __name__)
 def create_job():
     data = request.get_json()
     try:
+        provider_id = int(data['provider_id'])
+        title = data['title']
+        description = data['description']
+        status = data['status']
+        price = float(data['price'])
+        smart_contract_address = data.get('smart_contract_address', None)
+        image_path = None
+        if 'image_base64' in data and data['image_base64']:
+            image_base64 = data['image_base64']
+            image_path = save_image_from_base64(image_base64)
+        else:
+            image_path = 'images/default_image.jpg' 
         new_job = Job(
-            title=data['title'],
-            description=data['description'],
-            status=data['status'],
-            price=data['price'],
-            smart_contract_address=data.get('smart_contract_address', None),
-            provider_id=data['provider_id']
+            provider_id=provider_id,
+            title=title,
+            description=description,
+            status=status,
+            price=price,
+            smart_contract_address=smart_contract_address,
+            image=image_path
         )
         db.session.add(new_job)
         db.session.commit()
         return jsonify({"message": "Job created successfully", "job_id": new_job.job_id}), 201
+    except SQLAlchemyError as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 400
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
@@ -38,7 +57,8 @@ def get_jobs():
         'price': job.price,
         'smart_contract_address': job.smart_contract_address,
         'provider_id': job.provider_id,
-        'requester_id': job.requester_id
+        'requester_id': job.requester_id,
+        'image_url': image_url
     } for job in jobs]
     return jsonify(result)
     
@@ -54,7 +74,8 @@ def get_open_jobs():
         'price': job.price,
         'smart_contract_address': job.smart_contract_address,
         'provider_id': job.provider_id,
-        'requester_id': job.requester_id
+        'requester_id': job.requester_id,
+        'image_url': image_url
     } for job in jobs]
     return jsonify(result)
 
@@ -73,7 +94,8 @@ def get_job(job_id):
         'price': job.price,
         'smart_contract_address': job.smart_contract_address,
         'provider_id': job.provider_id,
-        'requester_id': job.requester_id
+        'requester_id': job.requester_id,
+        'image_url': image_url
     }
     return jsonify(job_data)
 
