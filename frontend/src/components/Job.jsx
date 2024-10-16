@@ -7,7 +7,9 @@ import CardActionArea from '@mui/material/CardActionArea';
 import axios from 'axios';
 
 const Job = ({jobId}) => {
+
     const [jobData, setJobData] = React.useState({});
+
     React.useEffect(() => {
     const fetchJobData = async () => {
         try {
@@ -20,6 +22,7 @@ const Job = ({jobId}) => {
       }
       fetchJobData();
     }, [jobId]);
+
     console.log(jobData);
     return (
     <Card sx={{ width: '100%', height: 300 }}>

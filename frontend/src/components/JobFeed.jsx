@@ -30,8 +30,9 @@ const JobFeed = () => {
         sx={{ marginTop: 15, paddingX: 10 }} // Margin top and horizontal padding
       >
         {jobs.map((item, index) => (
-          <Grid size={{ xs: 2, sm: 4, md: 4 }}>
-            <Job jobId={item.job_id} />
+
+          <Grid size={{ xs: 2, sm: 4, md: 4 }}> 
+              <Job jobId={item.job_id}/>
           </Grid>
         ))}
       </Grid>
