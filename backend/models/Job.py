@@ -15,7 +15,7 @@ class Job(db.Model):
     requester_id = db.Column(db.Integer, db.ForeignKey('Users.user_id'))
     provider_id = db.Column(db.Integer, db.ForeignKey('Users.user_id'))
 
-    def __init__(self, provider_id, title, description, status, price, smart_contract_address):
+    def __init__(self, provider_id, title, description, status, price, smart_contract_address, image):
         self.provider_id = provider_id
         self.requester_id = None
         self.title = title
@@ -26,10 +26,10 @@ class Job(db.Model):
         self.image = image if image else 'images/default_image.jpg'
 
     def get_job_details(self) -> str:
-        return f'Job ID: {self.job_id}, Title: {self.title}, Description: {self.description}, Price: {self.price}'
+        return f'Job ID: {self.job_id}, Title: {self.title}, Description: {self.description}, Price: {self.price}, Status: {self.status}, Image: {self.image}'
 
     def get_provider_id(self):
-    return self.provider_id
+        return self.provider_id
 
     def get_requester_id(self):
         return self.requester_id
