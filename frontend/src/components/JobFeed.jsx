@@ -9,7 +9,7 @@ import NavBar from './NavBar';
 
 const JobFeed = () => {
   const [jobs, setJobs] = React.useState([]);
-  
+
   React.useEffect(() => {
     const fetchJobs = async () => {
       try {
@@ -21,21 +21,20 @@ const JobFeed = () => {
     }
     fetchJobs();
   }, []);
-  
-  console.log(jobs);
+
   return (
     <Box >
-        <NavBar/>
-        <Grid 
+      <NavBar />
+      <Grid
         container spacing={{ xs: 2, md: 5 }} columns={{ xs: 4, sm: 8, md: 12 }}
-        sx={{ marginTop: 20, paddingX: 10 }} // Margin top and horizontal padding
-        >
+        sx={{ marginTop: 15, paddingX: 10 }} // Margin top and horizontal padding
+      >
         {jobs.map((item, index) => (
-          <Grid size={{ xs: 2, sm: 4, md: 4 }}> 
-              <Job />
+          <Grid size={{ xs: 2, sm: 4, md: 4 }}>
+            <Job jobId={item.job_id} />
           </Grid>
         ))}
-        </Grid>
+      </Grid>
     </Box>
   );
 }
