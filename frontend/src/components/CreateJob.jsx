@@ -1,34 +1,35 @@
 import React, { useState } from 'react';
-import { TextField, Button, Input, Box, Typography } from '@mui/material';
+import { TextField, Button, Box, Typography } from '@mui/material';
 import NavBar from './NavBar';
 
 function CreateJob() {
     const [jobTitle, setJobTitle] = useState('');
     const [jobDescription, setJobDescription] = useState('');
-    const [jobPhoto, setJobPhoto] = useState(null);
+    const [jobPhoto, setJobPhoto] = useState(null); // File object
     const [jobPrice, setJobPrice] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [fileName, setFileName] = useState('');
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         setIsSubmitting(true);
 
-        const jobData = {
-            title: jobTitle,
-            description: jobDescription,
-            price: jobPrice,
-            status: 'open',
-            provider_id: 1,
-        };
+        // Create a FormData object to handle the form and file data
+        const formData = new FormData();
+        formData.append('title', jobTitle);
+        formData.append('description', jobDescription);
+        formData.append('price', jobPrice);
+        formData.append('status', 'open');
+        formData.append('provider_id', 1); // Assuming provider ID is hardcoded for now
+
+        // If the user has selected a file, append it to the FormData object
+        if (jobPhoto) {
+            formData.append('image', jobPhoto);
+        }
 
         try {
             const response = await fetch('http://127.0.0.1:5000/jobs', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(jobData),
+                body: formData, // Pass FormData directly
             });
 
             if (response.ok) {
@@ -40,7 +41,6 @@ function CreateJob() {
                 setJobDescription('');
                 setJobPhoto(null);
                 setJobPrice('');
-                setFileName('');
             } else {
                 // Handle errors
                 console.error('Error creating job');
@@ -54,18 +54,18 @@ function CreateJob() {
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
-        setJobPhoto(file);
-        setFileName(file ? file.name : '');
+        setJobPhoto(file); // Store the file object
     };
 
     return (
-        <> <NavBar />
+        <> 
+        <NavBar />
         <Box
             component="form"
             onSubmit={handleSubmit}
             sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '50%', margin: '0 auto' }}
         >
-            <Typography variant="h4" align="center" sx ={{ fontFamily: 'Roboto', mt: 5, mb: 4 }}>
+            <Typography variant="h4" align="center" sx={{ fontFamily: 'Roboto', mt: 5, mb: 4 }}>
                 Post Your Service!
             </Typography>
 
@@ -99,7 +99,7 @@ function CreateJob() {
                     Upload Job Photo
                 </Button>
             </label>
-            {fileName && <Typography variant="body2" color="textSecondary">Selected file: {fileName}</Typography>}
+            {jobPhoto && <Typography variant="body2" color="textSecondary">Selected file: {jobPhoto.name}</Typography>}
 
             <TextField
                 label="Price"

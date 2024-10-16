@@ -21,7 +21,6 @@ class User(db.Model):
         self.email = email
         self.password = password
 
-
     def get_user_id(self):
         return self.user_id
 

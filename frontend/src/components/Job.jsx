@@ -7,7 +7,9 @@ import CardActionArea from '@mui/material/CardActionArea';
 import axios from 'axios';
 
 const Job = ({jobId}) => {
-    const [jobData, setJobData] = React.useState([]);
+
+    const [jobData, setJobData] = React.useState({});
+
     React.useEffect(() => {
     const fetchJobData = async () => {
         try {
@@ -19,18 +21,19 @@ const Job = ({jobId}) => {
         }
       }
       fetchJobData();
-    }, []);
+    }, [jobId]);
+
     console.log(jobData);
     return (
-    <Card sx={{ width: '100%' }}>
-      <CardActionArea>
+    <Card sx={{ width: '100%', height: 300 }}>
+      <CardActionArea sx={{ height: '100%' }}>
         <CardMedia
           component="img"
           height="140"
-          image="/images/lizardd.webp" /* How do we get our own images */
+          image={`http://127.0.0.1:5000/${jobData.image_url}`}
           alt="green iguana" 
         />
-        <CardContent>
+        <CardContent sx={{ height: '100%' }}>
           <Typography gutterBottom variant="h5" component="div">
             {jobData.title}
           </Typography>

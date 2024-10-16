@@ -62,7 +62,8 @@ CREATE TABLE IF NOT EXISTS Jobs (
     requester_id INT,
     FOREIGN KEY (requester_id) REFERENCES Users(user_id),
     provider_id INT,
-    FOREIGN KEY (provider_id) REFERENCES Users(user_id)
+    FOREIGN KEY (provider_id) REFERENCES Users(user_id),
+    image VARCHAR(255)
 );
 "
 

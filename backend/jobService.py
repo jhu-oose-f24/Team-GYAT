@@ -5,7 +5,7 @@ class JobService:
         self.jobs = []
     # fetch job
     # Returns the jobs where the user is either a provider or requester
-    def fetch_jobs(self, user_id: str) -> list:
+    def fetch_jobs(self, user_id: int) -> list:
         return [job for job in self.jobs if job.get_provider_id() == user_id or job.get_requester_id() == user_id]
 
     # add job
