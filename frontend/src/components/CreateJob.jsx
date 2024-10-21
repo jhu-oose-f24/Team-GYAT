@@ -48,25 +48,21 @@ function CreateJob() {
                 const signer = await provider.getSigner();
                 const provider_address = await signer.getAddress();
 
-                console.log(JobContractABI);
-                console.log(JobContractBytecode);
-                console.log("signer!!" + signer);
-
                 const factory = new ContractFactory(JobContractABI, JobContractBytecode, signer);
                 const jobPriceWei = ethers.parseEther(jobPrice);
 
-                console.log("address " + provider_address);
-                console.log("jobPrice " + jobPriceWei);
                 const contract = await factory.deploy(
                     provider_address,
                     jobPriceWei
                 );
 
-                await contract.deployed();
-                formData.append("smart_contract_address", contract.address);
+                await contract.waitForDeployment();
+                formData.append("smart_contract_address", contract.target);
+
             } else {
                 console.error("ETH provider not available");
                 alert("Install metamask or another eth wallet provider");
+                throw new Error("metamask not found");
             }
                     
             const response = await fetch('http://127.0.0.1:5000/jobs', {
@@ -86,6 +82,7 @@ function CreateJob() {
             } else {
                 // Handle errors
                 console.error('Error creating job');
+                console.error(response);
             }
         } catch (error) {
             console.error('Error:', error);
