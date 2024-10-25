@@ -13,7 +13,6 @@ const Job = ({jobId}) => {
     React.useEffect(() => {
     const fetchJobData = async () => {
         try {
-          console.log(jobId);
           const response = await axios.get(`http://127.0.0.1:5000/jobs/${jobId}`);
           setJobData(response.data);
         } catch (err) {
@@ -23,7 +22,6 @@ const Job = ({jobId}) => {
       fetchJobData();
     }, [jobId]);
 
-    console.log(jobData);
     return (
     <Card sx={{ width: '100%', height: 300 }}>
       <CardActionArea sx={{ height: '100%' }}>
