@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Typography } from '@mui/material';
 import NavBar from './NavBar';
+
 import { useEffect } from 'react';
+
+import JobContractJSON from '../contract/artifact/JobContract.json';
+import { ethers, ContractFactory, BrowserProvider } from "ethers";
+
+
 function CreateJob() {
     const [jobTitle, setJobTitle] = useState('');
     const [jobDescription, setJobDescription] = useState('');
@@ -27,6 +33,9 @@ function CreateJob() {
         fetchTags();
     }, []);
 
+    const JobContractABI = JobContractJSON.abi;
+    const JobContractBytecode = JobContractJSON.data.bytecode?.object;
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         setIsSubmitting(true);
@@ -40,13 +49,49 @@ function CreateJob() {
         formData.append('provider_id', 1); // Assuming provider ID is hardcoded for now
         formData.append('tag_id', jobTag);
 
+
         console.log(jobTag);
+
+        // limit max price to 0.01 ETH for now
+        const priceValue = parseFloat(jobPrice);
+        if (isNaN(priceValue) || priceValue <= 0 || priceValue > 0.01) {
+            alert("Price must be positive and less than or equal to 0.01 ETH");
+            setIsSubmitting(false);
+            return;
+        }
+
+
         // If the user has selected a file, append it to the FormData object
         if (jobPhoto) {
             formData.append('image', jobPhoto);
         }
 
         try {
+            // deploy contract to blockchain
+            if (typeof window.ethereum !== 'undefined') {
+                await window.ethereum.request({method: 'eth_requestAccounts' });
+
+                const provider = new BrowserProvider(window.ethereum);
+                const signer = await provider.getSigner();
+                const provider_address = await signer.getAddress();
+
+                const factory = new ContractFactory(JobContractABI, JobContractBytecode, signer);
+                const jobPriceWei = ethers.parseEther(jobPrice);
+
+                const contract = await factory.deploy(
+                    provider_address,
+                    jobPriceWei
+                );
+
+                await contract.waitForDeployment();
+                formData.append("smart_contract_address", contract.target);
+
+            } else {
+                console.error("ETH provider not available");
+                alert("Install metamask or another eth wallet provider");
+                throw new Error("metamask not found");
+            }
+                    
             const response = await fetch('http://127.0.0.1:5000/jobs', {
                 method: 'POST',
                 body: formData, // Pass FormData directly
@@ -65,6 +110,7 @@ function CreateJob() {
             } else {
                 // Handle errors
                 console.error('Error creating job');
+                console.error(response);
             }
         } catch (error) {
             console.error('Error:', error);
