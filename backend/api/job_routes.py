@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, url_for
 from models import db
 from models.Job import Job
+from models.Tag import Tag
 from utils.image_utils import save_image_from_base64
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.utils import secure_filename
@@ -63,6 +64,9 @@ def create_job():
         status = data['status']
         price = float(data['price'])
         smart_contract_address = data.get('smart_contract_address', None)
+        
+        tag_id = int(data.get('tag_id', None))
+        print(tag_id)
 
         # Handle the file upload
         image_path = None
@@ -79,6 +83,7 @@ def create_job():
             description=description,
             status=status,
             price=price,
+            tag_id=tag_id,
             smart_contract_address=smart_contract_address,
             image=image_path
         )
@@ -108,7 +113,8 @@ def get_jobs():
         'smart_contract_address': job.smart_contract_address,
         'provider_id': job.provider_id,
         'requester_id': job.requester_id,
-        'image_url': job.image
+        'image_url': job.image,
+        'tag_id': job.tag_id
     } for job in jobs]
     return jsonify(result)
     
@@ -125,7 +131,8 @@ def get_open_jobs():
         'smart_contract_address': job.smart_contract_address,
         'provider_id': job.provider_id,
         'requester_id': job.requester_id,
-        'image_url': job.image
+        'image_url': job.image,
+        'tag_id': job.tag_id
     } for job in jobs]
     return jsonify(result)
 
@@ -145,7 +152,8 @@ def get_job(job_id):
         'smart_contract_address': job.smart_contract_address,
         'provider_id': job.provider_id,
         'requester_id': job.requester_id,
-        'image_url': job.image
+        'image_url': job.image,
+        'tag_id': job.tag_id
     }
     return jsonify(job_data)
 
@@ -180,3 +188,9 @@ def delete_job(job_id):
         return jsonify({'message': 'Job deleted successfully'})
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+
+@job_bp.route('/tags', methods=['GET'])
+def get_tags():
+    tags = Tag.query.all()
+    result = [{'tag_id': tag.tag_id, 'tag_name': tag.tag_name} for tag in tags]
+    return jsonify(result)

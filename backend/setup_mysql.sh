@@ -43,6 +43,11 @@ sleep 20
 
 # Create SQL commands for Users and Jobs tables
 SQL_COMMANDS="
+CREATE TABLE IF NOT EXISTS Tag (
+    tag_id INT AUTO_INCREMENT PRIMARY KEY,
+    tag_name VARCHAR(100)
+);
+
 CREATE TABLE IF NOT EXISTS Users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     fullname VARCHAR(100),
@@ -60,9 +65,11 @@ CREATE TABLE IF NOT EXISTS Jobs (
     price FLOAT,
     smart_contract_address VARCHAR(255),
     requester_id INT,
+    tag_id INT,
     FOREIGN KEY (requester_id) REFERENCES Users(user_id),
     provider_id INT,
     FOREIGN KEY (provider_id) REFERENCES Users(user_id),
+    FOREIGN KEY (tag_id) REFERENCES Tag(tag_id),
     image VARCHAR(255)
 );
 "
