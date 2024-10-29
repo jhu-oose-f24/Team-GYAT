@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Typography } from '@mui/material';
+import { TextField, Button, Box, Typography, MenuItem } from '@mui/material';
 import NavBar from './NavBar';
 
 import { useEffect } from 'react';
@@ -47,7 +47,7 @@ function CreateJob() {
         formData.append('price', jobPrice);
         formData.append('status', 'open');
         formData.append('provider_id', 1); // Assuming provider ID is hardcoded for now
-        formData.append('tag_id', jobTag);
+        formData.append('tag_name', jobTag);
 
 
         console.log(jobTag);
@@ -69,7 +69,7 @@ function CreateJob() {
         try {
             // deploy contract to blockchain
             if (typeof window.ethereum !== 'undefined') {
-                await window.ethereum.request({method: 'eth_requestAccounts' });
+                await window.ethereum.request({ method: 'eth_requestAccounts' });
 
                 const provider = new BrowserProvider(window.ethereum);
                 const signer = await provider.getSigner();
@@ -91,7 +91,7 @@ function CreateJob() {
                 alert("Install metamask or another eth wallet provider");
                 throw new Error("metamask not found");
             }
-                    
+
             const response = await fetch('http://127.0.0.1:5000/jobs', {
                 method: 'POST',
                 body: formData, // Pass FormData directly
@@ -181,22 +181,24 @@ function CreateJob() {
                     required
                 />
 
-                <Box>
-                    <label htmlFor="job-tag">Select Tag</label>
-                    <select
-                        id="job-tag"
-                        value={jobTag}
-                        onChange={(e) => setJobTag(e.target.value)}
-                        required
-                    >
-                        <option value="">Select a tag</option>
-                        {tags.map((tag) => (
-                            <option key={tag.tag_id} value={tag.tag_id}>
-                                {tag.tag_name}
-                            </option>
-                        ))}
-                    </select>
-                </Box>
+                <TextField
+                    select
+                    label="Select Tag"
+                    value={jobTag}
+                    onChange={(e) => setJobTag(e.target.value)}
+                    fullWidth
+                    required
+                >
+                    <MenuItem value="">
+                        Select a tag
+                    </MenuItem>
+                    {tags.map((tag) => (
+                        <MenuItem key={tag.tag_id} value={tag.tag_name}>
+                            {tag.tag_name}
+                        </MenuItem>
+                    ))}
+                </TextField>
+
 
                 <Button variant="contained" color="primary" type="submit" disabled={isSubmitting}>
                     {isSubmitting ? 'Submitting...' : 'Submit'}

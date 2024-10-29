@@ -10,22 +10,21 @@ class Job(db.Model):
     price = db.Column(db.Float, nullable=False)
     smart_contract_address = db.Column(db.String(255))
     image = db.Column(db.String(255), nullable=True, default='images/default_image.jpg')
-    tag_id = db.Column(db.Integer, db.ForeignKey('Tag.tag_id'))
-    tag = db.relationship('Tag', backref='Jobs')
+    tag_name = db.Column(db.String(100), nullable=False)
 
 
     # foreign keys to reference users
     requester_id = db.Column(db.Integer, db.ForeignKey('Users.user_id'))
     provider_id = db.Column(db.Integer, db.ForeignKey('Users.user_id'))
 
-    def __init__(self, provider_id, title, description, status, price, tag_id, smart_contract_address, image):
+    def __init__(self, provider_id, title, description, status, price, tag_name, smart_contract_address, image):
         self.provider_id = provider_id
         self.requester_id = None
         self.title = title
         self.description = description
         self.status = status
         self.price = price
-        self.tag_id = tag_id
+        self.tag_name = tag_name
         self.smart_contract_address = smart_contract_address
         self.image = image if image else 'images/default_image.jpg'
 
