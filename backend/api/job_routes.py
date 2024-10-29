@@ -65,8 +65,7 @@ def create_job():
         price = float(data['price'])
         smart_contract_address = data.get('smart_contract_address', None)
         
-        tag_id = int(data.get('tag_id', None))
-        print(tag_id)
+        tag_name = data.get('tag_name', None)
 
         # Handle the file upload
         image_path = None
@@ -83,7 +82,7 @@ def create_job():
             description=description,
             status=status,
             price=price,
-            tag_id=tag_id,
+            tag_name=tag_name,
             smart_contract_address=smart_contract_address,
             image=image_path
         )
@@ -114,7 +113,7 @@ def get_jobs():
         'provider_id': job.provider_id,
         'requester_id': job.requester_id,
         'image_url': job.image,
-        'tag_id': job.tag_id
+        'tag_name': job.tag_name
     } for job in jobs]
     return jsonify(result)
     
@@ -132,7 +131,7 @@ def get_open_jobs():
         'provider_id': job.provider_id,
         'requester_id': job.requester_id,
         'image_url': job.image,
-        'tag_id': job.tag_id
+        'tag_name': job.tag_name
     } for job in jobs]
     return jsonify(result)
 
@@ -153,7 +152,7 @@ def get_job(job_id):
         'provider_id': job.provider_id,
         'requester_id': job.requester_id,
         'image_url': job.image,
-        'tag_id': job.tag_id
+        'tag_name': job.tag_name
     }
     return jsonify(job_data)
 

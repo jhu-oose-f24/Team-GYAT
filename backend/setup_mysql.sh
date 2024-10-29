@@ -65,11 +65,10 @@ CREATE TABLE IF NOT EXISTS Jobs (
     price FLOAT,
     smart_contract_address VARCHAR(255),
     requester_id INT,
-    tag_id INT,
+    tag_name VARCHAR(100),
     FOREIGN KEY (requester_id) REFERENCES Users(user_id),
     provider_id INT,
     FOREIGN KEY (provider_id) REFERENCES Users(user_id),
-    FOREIGN KEY (tag_id) REFERENCES Tag(tag_id),
     image VARCHAR(255)
 );
 "
