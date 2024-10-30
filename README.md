@@ -70,6 +70,52 @@ next iteration. Currently have it setup so you can update username, fullname,
 year, and email, but might to choose to remove updating feature later. Will
 connect everything to backend after login setup.
 
+
+## How to Use Conversations and Messages
+Since this API doesn't currently require login, we’ll demonstrate creating and managing conversations and messages directly through Postman. NOTE: Make sure to replace the ids with the ids you generate.
+
+1. Creating a Conversation
+POST URL: http://127.0.0.1:5000/conversations
+Headers: Content-Type: application/json
+Body (JSON):
+{
+  "participant_ids": [1, 2]
+}
+
+2. Fetching All Conversations for a User
+GET URL: http://127.0.0.1:5000/users/1/conversations
+
+3. Creating Messages
+POST URL: http://127.0.0.1:5000/messages
+Headers: Content-Type: application/json
+Body (JSON):
+{
+  "text": "Hello, everyone!",
+  "sender_id": 1,
+  "conversation_id": 1
+}
+
+4. Fetching All Messages in a Conversation
+Method: GET
+URL: http://127.0.0.1:5000/conversations/1/messages
+
+5. Fetching a Single Message by ID
+GET URL: http://127.0.0.1:5000/messages/1
+
+6. Adding a Participant to an Existing Conversation
+POST URL: http://127.0.0.1:5000/conversations/1/participants
+Headers: Content-Type: application/json
+Body (JSON):
+{
+  "user_id": 3
+}
+
+7. Removing a Participant from a Conversation
+DELETE URL: http://127.0.0.1:5000/conversations/1/participants/2
+
+8. Fetching Participants in a Conversation
+GET URL: http://127.0.0.1:5000/conversations/1/participants
+
 ## Creating Job/Service
 On the Navigation Bar of our app, there is a "Become a Seller" button
 Click on it, and fill out the fields there to post your job/service, and it 
