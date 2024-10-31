@@ -71,7 +71,7 @@ year, and email, but might to choose to remove updating feature later. Will
 connect everything to backend after login setup.
 
 ## Connecting to ETH testnet
-1. Running the testnet: in `frontent`, run `npm install hardhat`, then `npx hardhat node`. This command will start the testnet, and provide 20 mock accounts with 10000 ETH loaded into each one. Take note of the url present at the top of the printed text block when hardhat is run: `http://127.0.0.1:8545`.
+1. Running the testnet: in `frontend`, run `npm install hardhat`, then `npx hardhat node`. This command will start the testnet, and provide 20 mock accounts with 10000 ETH loaded into each one. Take note of the url present at the top of the printed text block when hardhat is run: `http://127.0.0.1:8545`.
 2. Adding the testnet network to MetaMask: in the networks menu reachable from the top left button, select "Add Network" then "Add Network Manually" at the bottom of the next page. Name the network anything, and input the url from the previous step as the New GPC url. Input `31337` as the chain ID and `ETH` as the currency`.
 3. Connecting to an account: In the logs printed by hardhat, choose one of the "Private Key"s and copy it. In MetaMask at the center top, select "Account", "Add Account or Hardware Wallet", "Import Account", and paste the private key. You should see 10000 ETH loaded into your account on MetaMask (assuming you have the testnet selected. If not, change to the testnet in the top left corner).
 4. Creating a smart contract: on the web app, input data into the create contract fields and press submit. On MetaMask, ensure that the account that you just added is the one selected. Confirm the contract creation on MetaMask.
