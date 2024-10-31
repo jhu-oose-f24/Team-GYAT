@@ -71,10 +71,34 @@ CREATE TABLE IF NOT EXISTS Jobs (
     FOREIGN KEY (provider_id) REFERENCES Users(user_id),
     image VARCHAR(255)
 );
+
+CREATE TABLE IF NOT EXISTS Conversations (
+    conversation_id INT AUTO_INCREMENT PRIMARY KEY,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS Messages (
+    message_id INT AUTO_INCREMENT PRIMARY KEY,
+    text VARCHAR(500),
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    sender_id INT,
+    conversation_id INT,
+    FOREIGN KEY (sender_id) REFERENCES Users(user_id),
+    FOREIGN KEY (conversation_id) REFERENCES Conversations(conversation_id)
+);
+
+CREATE TABLE IF NOT EXISTS ConversationParticipants (
+    conversation_id INT,
+    user_id INT,
+    PRIMARY KEY (conversation_id, user_id),
+    FOREIGN KEY (conversation_id) REFERENCES Conversations(conversation_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
 "
 
 # create tables using the above definitions
-echo "Creating tables Users and Jobs..."
+echo "Creating tables Users, Jobs, Conversations, Messages, and ConversationParticipants..."
 docker exec -i $CONTAINER_NAME mysql -u root -p$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE <<< "$SQL_COMMANDS"
 
 echo "setup complete."
