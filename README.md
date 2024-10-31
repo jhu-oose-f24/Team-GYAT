@@ -1,5 +1,7 @@
 # Team-GYAT
 
+Our app is a platform for students to find and offer services to their peers. Think of existing online marketplaces for tasks like Fiverr, but this is only offered to JHU students, and students use cryptocurrency to pay each other, eliminating the need for a middle man in terms of payments. Additionally, our app will use advanced searching algorithms to help users find tasks that match their past interests. 
+
 ## Backend 
 ### Server Setup
 The `flask` framework is used for the server, which interacts with the database using `SQLAlchemy`.
