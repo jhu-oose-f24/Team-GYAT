@@ -94,6 +94,7 @@ def create_job():
         db.session.rollback()
         return jsonify({"error": str(e)}), 400
     except Exception as e:
+        print(e)
         return jsonify({"error": str(e)}), 400
 
 def is_valid_status(status):
