@@ -7,20 +7,16 @@ import Box from '@mui/material/Box';
 import { TextField, InputAdornment } from '@mui/material';
 import Job from './Job';
 import NavBar from './NavBar';
-<<<<<<< HEAD
-import { Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import SearchBar from "./SearchBar";
-=======
 import { Select, MenuItem, FormControl, InputLabel, Typography, Divider } from '@mui/material';
->>>>>>> c83589bc8579e2fb63aa6c3adeca2c0e3e3468d6
 
 const JobFeed = () => {
   const [jobs, setJobs] = React.useState([]);
+  const [searchQuery, setSearchQuery] = React.useState('');
   const [filter, setFilter] = React.useState('');
   const [filteredJobs, setFilteredJobs] = React.useState([]);
-<<<<<<< HEAD
-=======
   const [tagFilter, setTagFilter] = React.useState('');
+
   const tagList = [
     { value: 'Tutoring', label: 'Tutoring' },
     { value: 'Cleaning', label: 'Cleaning' },
@@ -28,7 +24,6 @@ const JobFeed = () => {
     { value: 'Dorm Service', label: 'Dorm Service' },
     { value: 'Other', label: 'Other' },
   ];
->>>>>>> c83589bc8579e2fb63aa6c3adeca2c0e3e3468d6
 
   const filterList = [
     { value: 'price', label: 'Price' },
@@ -53,6 +48,10 @@ const JobFeed = () => {
   const handleChange = (e) => {
     setFilter(e.target.value);
   }
+  
+  const handleSearch = (e) => {
+    setSearchQuery(e); 
+  }
 
   const handleTagChange = (e) => {
     setTagFilter(e.target.value);
@@ -60,25 +59,7 @@ const JobFeed = () => {
 
   React.useEffect(() => {
     const filterJobs = () => {
-<<<<<<< HEAD
-    let sortedJobs = [...jobs];
-
-    switch (filter) {
-    case 'price':
-      sortedJobs.sort((a, b) => a.price - b.price);
-      break;
-    case 'highToLow':
-      sortedJobs.sort((a, b) => b.price - a.price);
-      break;
-    }
-    setFilteredJobs(sortedJobs);
-    };                                                    
-    filterJobs();
-  }, [filter, jobs]);
-
-=======
       let sortedJobs = [...jobs];
-
       switch (filter) {
         case 'price':
           sortedJobs.sort((a, b) => a.price - b.price);
@@ -87,29 +68,24 @@ const JobFeed = () => {
           sortedJobs.sort((a, b) => b.price - a.price);
           break;
       }
-
       if (tagFilter) {
         sortedJobs = sortedJobs.filter(job => job.tag_name === tagFilter);
       }
-
+      if (searchQuery && searchQuery.trim()) {  // Changed from searchedJobs to searchQuery
+        sortedJobs = sortedJobs.filter(job => {
+          const jobLower = job.title.toLowerCase();
+          return jobLower.startsWith(searchQuery.toLowerCase().trim());
+        });
+      }
       setFilteredJobs(sortedJobs);
     };
     filterJobs();
-  }, [filter, tagFilter, jobs]);
->>>>>>> c83589bc8579e2fb63aa6c3adeca2c0e3e3468d6
+  }, [filter, tagFilter, jobs, searchQuery]);
+
   return (
     <Box sx = {{ paddingBottom: 5 }}>
       <NavBar />
-<<<<<<< HEAD
-      <SearchBar jobs={filteredJobs} />
-     <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-      <InputLabel>Filter</InputLabel>
-      <Select value={filter} label="Filter" onChange={handleChange}>
-      {filterList.map((item) => (
-        <MenuItem value={item.value}> {item.label} </MenuItem> 
-      ))}
-      </Select>
-=======
+      <SearchBar jobs={filteredJobs} onSearch={handleSearch} />
       <Typography variant="h4" sx={{ marginLeft: 10, marginTop: 7, fontWeight: 'bold', fontFamily: 'Roboto' }}>Services Offered:</Typography>
 
       <FormControl sx={{ m: 1, minWidth: 120, marginLeft: 10, marginTop: 7, marginBottom: 5, width: 150 }} size="medium">
@@ -124,7 +100,6 @@ const JobFeed = () => {
             </MenuItem>
           ))}
         </Select>
->>>>>>> c83589bc8579e2fb63aa6c3adeca2c0e3e3468d6
       </FormControl>
 
       <FormControl sx={{ m: 1, minWidth: 120, marginTop: 7, marginBottom: 5, width: 150 }} size="medium">
