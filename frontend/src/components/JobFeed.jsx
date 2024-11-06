@@ -4,15 +4,19 @@ import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Grid2';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
+import { TextField, InputAdornment } from '@mui/material';
 import Job from './Job';
 import NavBar from './NavBar';
+import SearchBar from "./SearchBar";
 import { Select, MenuItem, FormControl, InputLabel, Typography, Divider } from '@mui/material';
 
 const JobFeed = () => {
   const [jobs, setJobs] = React.useState([]);
+  const [searchQuery, setSearchQuery] = React.useState('');
   const [filter, setFilter] = React.useState('');
   const [filteredJobs, setFilteredJobs] = React.useState([]);
   const [tagFilter, setTagFilter] = React.useState('');
+
   const tagList = [
     { value: 'Tutoring', label: 'Tutoring' },
     { value: 'Cleaning', label: 'Cleaning' },
@@ -44,6 +48,10 @@ const JobFeed = () => {
   const handleChange = (e) => {
     setFilter(e.target.value);
   }
+  
+  const handleSearch = (e) => {
+    setSearchQuery(e); 
+  }
 
   const handleTagChange = (e) => {
     setTagFilter(e.target.value);
@@ -52,7 +60,6 @@ const JobFeed = () => {
   React.useEffect(() => {
     const filterJobs = () => {
       let sortedJobs = [...jobs];
-
       switch (filter) {
         case 'price':
           sortedJobs.sort((a, b) => a.price - b.price);
@@ -61,18 +68,24 @@ const JobFeed = () => {
           sortedJobs.sort((a, b) => b.price - a.price);
           break;
       }
-
       if (tagFilter) {
         sortedJobs = sortedJobs.filter(job => job.tag_name === tagFilter);
       }
-
+      if (searchQuery && searchQuery.trim()) {  // Changed from searchedJobs to searchQuery
+        sortedJobs = sortedJobs.filter(job => {
+          const jobLower = job.title.toLowerCase();
+          return jobLower.startsWith(searchQuery.toLowerCase().trim());
+        });
+      }
       setFilteredJobs(sortedJobs);
     };
     filterJobs();
-  }, [filter, tagFilter, jobs]);
+  }, [filter, tagFilter, jobs, searchQuery]);
+
   return (
     <Box sx = {{ paddingBottom: 5 }}>
       <NavBar />
+      <SearchBar jobs={filteredJobs} onSearch={handleSearch} />
       <Typography variant="h4" sx={{ marginLeft: 10, marginTop: 7, fontWeight: 'bold', fontFamily: 'Roboto' }}>Services Offered:</Typography>
 
       <FormControl sx={{ m: 1, minWidth: 120, marginLeft: 10, marginTop: 7, marginBottom: 5, width: 150 }} size="medium">
