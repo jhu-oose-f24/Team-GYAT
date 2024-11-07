@@ -40,8 +40,9 @@ export default function NavBar() {
   };
 
   const profilePage = () => {
-    navigate('/userProfile');
+    window.location.href = 'http://localhost:5000/jhu/login';
   };
+
 
   const createJob = () => {
     navigate('/createJob');

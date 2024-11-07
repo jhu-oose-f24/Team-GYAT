@@ -1,7 +1,10 @@
 import re
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, session
 from models import db
 from models.User import User
+from functools import wraps
+from flask import redirect, url_for
+
 
 user_bp = Blueprint('user_bp', __name__)
 
@@ -23,14 +26,6 @@ def get_users():
     result = [{'user_id': user.user_id, 'username': user.username, 'fullname':user.fullname, 'year':user.year, 'email': user.email} for user in users]
     return jsonify(result)
 
-#ger single user by userid
-@user_bp.route('/users/<int:user_id>', methods=['GET'])
-def get_user(user_id):
-    user = User.query.get(user_id)
-    if not user:
-        return jsonify({"error": "User not found"}), 404
-    user_data = {'user_id': user.user_id, 'username': user.username, 'fullname':user.fullname, 'year':user.year, 'email': user.email}
-    return jsonify(user_data)
 
 # update user profile
 @user_bp.route('/users/<int:user_id>', methods=['PUT'])
@@ -83,3 +78,20 @@ def is_valid_email(potential_email) -> bool:
 def is_valid_year(year):
     # Check if the year is a 4-digit string and starts with '20'
     return bool(re.match(r'^20\d{2}$', year))
+    
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            return redirect(url_for('login_bp.login'))
+        return f(*args, **kwargs)
+    return decorated_function
+
+@user_bp.route('/users/<int:user_id>', methods=['GET'])
+@login_required
+def get_user(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+    user_data = {'user_id': user.user_id, 'username': user.username, 'fullname': user.fullname, 'year': user.year, 'email': user.email}
+    return jsonify(user_data)

@@ -16,3 +16,9 @@ SQLAlchemy==2.0.35
 typing_extensions==4.12.2
 Werkzeug==3.0.4
 zipp==3.20.2
+flask-session==0.4.0
+lxml==4.9.3
+requests==2.31.0
+flask-saml2==0.3.0
+pyOpenSSL<18
+cryptography<3.4
