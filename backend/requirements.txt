@@ -21,4 +21,3 @@ lxml==4.9.3
 requests==2.31.0
 flask-saml2==0.3.0
 pyOpenSSL==17.5.0
-torch==2.0.1+cpu
