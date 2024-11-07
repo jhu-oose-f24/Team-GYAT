@@ -1,4 +1,5 @@
 import pymysql
+import os
 pymysql.install_as_MySQLdb()
 
 from flask import Flask, request, jsonify
@@ -25,7 +26,7 @@ def create_app():
     app = Flask(__name__)
     CORS(app)
     # db configuration
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:team-gyat@127.0.0.1/task-market-db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('JAWSDB_URL') or os.getenv('DATABASE_URL')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     # associate db with app
