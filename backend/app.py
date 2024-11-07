@@ -34,6 +34,12 @@ def create_app():
 
     # register endpoints
     register_routes(app)
+
+    # Add a simple route for the root path
+    @app.route('/')
+    def home():
+        return "Welcome to Task Market!"
+    
     with app.app_context():
         db.create_all()  
         seed_tags()
