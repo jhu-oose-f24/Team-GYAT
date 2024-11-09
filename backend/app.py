@@ -5,7 +5,7 @@ pymysql.install_as_MySQLdb()
 from flask import Flask
 from flask_cors import CORS
 from config import Config
-
+from models import db
 from api import register_routes
 from models import db
 from models.Tag import Tag
