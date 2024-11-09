@@ -12,13 +12,8 @@ class JHUServiceProvider(ServiceProvider):
     def get_sls_url(self):
         return Config.SAML2_SP_SLS_URL
 
-    def get_idp_metadata_url(self):
-        return Config.SAML2_IDP_METADATA_URL
-
     def get_sp_private_key(self):
         return private_key_from_file("certs/key.pem")
 
     def get_sp_certificate(self):
         return certificate_from_file("certs/cert.pem")
-
-service_provider = JHUServiceProvider()
