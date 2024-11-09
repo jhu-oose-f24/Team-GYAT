@@ -27,14 +27,10 @@ def create_app():
     app = Flask(__name__)
     CORS(app)
     # db configuration
-    # Set SAML2_IDENTITY_PROVIDERS directly in app.config
     app.config['SAML2_IDENTITY_PROVIDERS'] = [
         {
-            "CLASS": "flask_saml2.utils.IdPHandler",
-            "OPTIONS": {
-                "metadata_url": Config.SAML2_IDP_METADATA_URL,
-                "entity_id": "https://idp.jh.edu/idp/shibboleth",
-            },
+            "entity_id": "https://idp.jh.edu/idp/shibboleth",
+            "metadata_url": Config.SAML2_IDP_METADATA_URL,
         }
     ]
 
