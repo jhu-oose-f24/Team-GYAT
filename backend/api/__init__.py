@@ -11,6 +11,5 @@ def register_routes(app):
     app.register_blueprint(conversation_bp)
     app.register_blueprint(message_bp)
     app.register_blueprint(login_bp)
-    app.register_blueprint(service_provider.create_blueprint())
     
 

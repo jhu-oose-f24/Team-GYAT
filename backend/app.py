@@ -34,7 +34,8 @@ def create_app():
 
     # Register routes and blueprints
     register_routes(app)
-    app.register_blueprint(service_provider.create_blueprint(name="jhu_sso_blueprint"), url_prefix='/sso')
+    app.register_blueprint(service_provider.create_blueprint(), url_prefix='/sso')
+
 
 
     @app.route('/')
