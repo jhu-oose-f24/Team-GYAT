@@ -5,8 +5,7 @@ login_bp = Blueprint('login_bp', __name__)
 
 @login_bp.route('/jhu/login', methods=['GET'])
 def login():
-    # Replace with the actual login URL endpoint from your SAML provider
-    return redirect(url_for('flask_saml2_sp.login'))
+    return redirect(service_provider.login_url())
 
 @login_bp.route('/jhu/logout')
 def logout():
