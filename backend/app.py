@@ -7,7 +7,6 @@ from flask_cors import CORS
 from config import Config
 from models import db
 from api import register_routes
-from models import db
 from models.Tag import Tag
 from models.login import service_provider
 
@@ -36,8 +35,6 @@ def create_app():
     register_routes(app)
     app.register_blueprint(service_provider.create_blueprint(), url_prefix='/sso')
 
-
-
     @app.route('/')
     def home():
         return "Welcome to Task Market!"
@@ -48,7 +45,8 @@ def create_app():
 
     return app
 
+app = create_app()
+
 if __name__ == '__main__':
-    app = create_app()
     port = int(os.getenv('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
