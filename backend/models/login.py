@@ -17,3 +17,6 @@ class JHUServiceProvider(ServiceProvider):
 
     def get_sp_certificate(self):
         return certificate_from_file("certs/cert.pem")
+    
+# Instantiate the service provider
+service_provider = JHUServiceProvider()
