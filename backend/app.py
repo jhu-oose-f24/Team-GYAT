@@ -7,6 +7,7 @@ from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import inspect
 from config import Config
+from flask_saml2.utils import IdPHandler
 
 from api import register_routes
 from models import db
@@ -29,6 +30,7 @@ def create_app():
     # db configuration
     app.config['SAML2_IDENTITY_PROVIDERS'] = [
         {
+            "CLASS": "flask_saml2.utils.IdPHandler",  # Required handler class
             "entity_id": "https://idp.jh.edu/idp/shibboleth",
             "metadata_url": Config.SAML2_IDP_METADATA_URL,
         }
