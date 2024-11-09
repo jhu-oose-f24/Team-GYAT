@@ -6,6 +6,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import inspect
+from config import Config
 
 from api import register_routes
 from models import db
@@ -26,6 +27,18 @@ def create_app():
     app = Flask(__name__)
     CORS(app)
     # db configuration
+    # Set SAML2_IDENTITY_PROVIDERS directly in app.config
+    app.config['SAML2_IDENTITY_PROVIDERS'] = [
+        {
+            "CLASS": "flask_saml2.utils.IdPHandler",
+            "OPTIONS": {
+                "metadata_url": Config.SAML2_IDP_METADATA_URL,
+                "entity_id": "https://idp.jh.edu/idp/shibboleth",
+            },
+        }
+    ]
+
+    # Database and other setup as usual
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('JAWSDB_URL') or os.getenv('DATABASE_URL')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
