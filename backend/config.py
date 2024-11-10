@@ -1,3 +1,4 @@
+# config.py
 import os
 
 class Config:
@@ -13,7 +14,7 @@ class Config:
     # Identity Providers configuration
     SAML2_IDENTITY_PROVIDERS = [
         {
-            "CLASS": "flask_saml2.sp.idphandler.MetadataIdentityProvider",
+            "CLASS": "flask_saml2.sp.idphandler.MetadataIdPHandler",
             "OPTIONS": {
                 "entity_id": SAML2_IDP_ENTITY_ID,
                 "metadata_url": SAML2_IDP_METADATA_URL,
