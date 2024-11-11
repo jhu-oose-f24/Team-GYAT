@@ -159,8 +159,8 @@ def get_job(job_id):
 # update job status
 @job_bp.route('/jobs/<int:job_id>/status', methods=['PUT'])
 def update_job_status(job_id):
-    data = request.get_json()
-    new_status = data.get('status')
+    data = request.form
+    new_status = data['status']
 
     if not is_valid_status(new_status):
         return jsonify({'error': 'Invalid job status'}), 400
