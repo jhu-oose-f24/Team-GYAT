@@ -34,6 +34,11 @@ def create_app():
     # Register routes and blueprints
     register_routes(app)
     app.register_blueprint(service_provider.create_blueprint(), url_prefix='/sso')
+    
+    # route to serve metadata at /sso/metadata/
+    @app.route('/sso/metadata/')
+    def metadata():
+        return service_provider.create_metadata_response()
 
     @app.route('/')
     def home():
