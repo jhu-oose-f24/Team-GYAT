@@ -19,9 +19,11 @@ export default function NavBar() {
   async function requestAccount() {
     if (window.ethereum) {
       try {
+          console.log("waiting ... ")
         const accounts = await window.ethereum.request({
           method: "eth_requestAccounts",
         });
+          console.log(accounts[0] + " past");
         setWalletAddress(accounts[0]);
         } catch (error) {
         console.log('Error connecting to MetaMask', error);
