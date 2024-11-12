@@ -21,6 +21,7 @@ class JHUServiceProvider(ServiceProvider):
         return certificate_from_file("certs/cert.pem")
 
     def get_assertion_consumer_service_view(self):
+        print("Custom get_assertion_consumer_service_view() called")
         current_app.logger.info("Custom get_assertion_consumer_service_view() called")
         return CustomAssertionConsumer.as_view('acs', self)
     
