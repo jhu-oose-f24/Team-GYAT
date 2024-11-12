@@ -1,7 +1,7 @@
 from flask_saml2.sp import ServiceProvider
 from flask_saml2.utils import certificate_from_file, private_key_from_file
 from config import Config
-from custom_views import CustomACSView  # Import your custom ACSView
+from flask import request, current_app
 
 class JHUServiceProvider(ServiceProvider):
     def get_sp_entity_id(self):
@@ -19,8 +19,28 @@ class JHUServiceProvider(ServiceProvider):
     def get_sp_certificate(self):
         return certificate_from_file("certs/cert.pem")
 
-    def get_acs_view(self):
-        # Override to return your custom ACS view
-        return CustomACSView.as_view(self.acs_view_name, sp=self)
+    def acs(self):
+        """Custom ACS method to handle missing 'RelayState'."""
+        current_app.logger.info("Custom ACS method called")
+        # Access 'RelayState' safely with a default value
+        relay_state = request.form.get('RelayState', '')
+        if not relay_state:
+            current_app.logger.warning("RelayState is missing in the SAML response")
+
+        saml_response = request.form.get('SAMLResponse')
+        if not saml_response:
+            current_app.logger.error("No SAMLResponse found in POST data")
+            return self.error("No SAMLResponse found in POST data")
+
+        try:
+            handler = self.parse_authn_request_response(
+                saml_response,
+                binding='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+                relay_state=relay_state)
+            return self.handle_authn_response(handler)
+        except Exception as e:
+            current_app.logger.exception("Error processing SAML response: %s", e)
+            return self.error("An error occurred during SAML authentication")
+
     
 service_provider = JHUServiceProvider()
