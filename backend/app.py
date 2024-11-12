@@ -35,11 +35,6 @@ def create_app():
     register_routes(app)
     app.register_blueprint(service_provider.create_blueprint(), url_prefix='/sso')
 
-    # route to serve metadata at /sso/metadata/
-    @app.route('/sso/metadata/')
-    def metadata():
-        return service_provider.get_metadata_response()
-
     @app.route('/')
     def home():
         return "Welcome to Task Market!"

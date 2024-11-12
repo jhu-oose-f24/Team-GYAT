@@ -1,8 +1,7 @@
-# idphandler.py
-from flask_saml2.sp import IdentityProvider
+from flask_saml2.sp.idphandler import IdPHandler
 from flask_saml2.utils import Certificate
 
-class JHUIdentityProvider(IdentityProvider):
+class JHUIdentityProvider(IdPHandler):
     def get_entity_id(self):
         return 'https://login.jh.edu/idp/shibboleth'
 
