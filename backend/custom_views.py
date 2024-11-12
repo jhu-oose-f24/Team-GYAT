@@ -3,7 +3,7 @@ from flask import request, current_app
 
 class CustomACSView(SAML2View):
     def post(self):
-        """Handle the HTTP POST binding with optional RelayState."""
+        current_app.logger.info("CustomACSView.post() called")
         # Log incoming form data for debugging
         current_app.logger.debug(f"Form data received: {request.form}")
 
@@ -25,5 +25,5 @@ class CustomACSView(SAML2View):
             return self.handle_authn_response(handler)
 
         except Exception as e:
-            current_app.logger.error(f"Unhandled exception in ACSView: {e}")
+            current_app.logger.exception(f"Unhandled exception in CustomACSView: {e}")
             return self.error("An error occurred during SAML authentication")
