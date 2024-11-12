@@ -1,7 +1,7 @@
 from flask_saml2.sp import ServiceProvider
 from flask_saml2.utils import certificate_from_file, private_key_from_file
 from config import Config
-from custom_views import CustomAssertionConsumer  # Import your custom view
+from custom_views import CustomAssertionConsumer
 from flask import current_app
 
 class JHUServiceProvider(ServiceProvider):
@@ -22,7 +22,6 @@ class JHUServiceProvider(ServiceProvider):
 
     def get_assertion_consumer_service_view(self):
         current_app.logger.info("Custom get_assertion_consumer_service_view() called")
-        # Return your custom AssertionConsumer view
-        return CustomAssertionConsumer.as_view('acs', sp=self)
+        return CustomAssertionConsumer.as_view('acs', self)
     
 service_provider = JHUServiceProvider()
