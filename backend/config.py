@@ -1,5 +1,3 @@
-import os
-
 class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY', 'team_gyat')
 
@@ -12,6 +10,11 @@ class Config:
     SAML2_IDENTITY_PROVIDERS = [
         {
             "CLASS": "idp_handler.JHUIdentityProvider",
-            "OPTIONS": {},
+            "OPTIONS": {
+                "entity_id": "https://login.jh.edu/idp/shibboleth",
+                "sso_url": "https://login.jh.edu/idp/profile/SAML2/Redirect/SSO",
+                "slo_url": "https://login.jh.edu/cgi-bin/logoff.pl",
+                "certificate": "certs/idp_certificate.pem"
+            },
         }
     ]
