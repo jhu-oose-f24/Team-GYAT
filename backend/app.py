@@ -39,7 +39,12 @@ def create_app():
     @app.route('/')
     def home():
         return "Welcome to Task Market!"
-    
+    @app.before_request
+    def log_request_info():
+        logging.debug("Request Headers: %s", request.headers)
+        logging.debug("Request Body: %s", request.get_data())
+        logging.debug("Form Data: %s", request.form)
+        
     @app.errorhandler(Exception)
     def handle_exception(e):
         app.logger.exception("Unhandled Exception: %s", e)
