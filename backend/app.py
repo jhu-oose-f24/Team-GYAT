@@ -1,8 +1,9 @@
 import pymysql
 import os
+import logging
 pymysql.install_as_MySQLdb()
 
-from flask import Flask
+from flask import Flask, request
 from flask_cors import CORS
 from config import Config
 from models import db
@@ -38,7 +39,12 @@ def create_app():
     @app.route('/')
     def home():
         return "Welcome to Task Market!"
-
+    
+    @app.errorhandler(Exception)
+    def handle_exception(e):
+        app.logger.exception("Unhandled Exception: %s", e)
+        return "Internal Server Error", 500
+    
     with app.app_context():
         db.create_all()
         seed_tags()
