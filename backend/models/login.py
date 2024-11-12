@@ -22,3 +22,5 @@ class JHUServiceProvider(ServiceProvider):
     def get_acs_view(self):
         # Override to return your custom ACS view
         return CustomACSView.as_view(self.acs_view_name, sp=self)
+    
+service_provider = JHUServiceProvider()
