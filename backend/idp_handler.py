@@ -2,6 +2,10 @@ from flask_saml2.sp.idphandler import IdPHandler
 from flask_saml2.utils import certificate_from_file
 
 class JHUIdentityProvider(IdPHandler):
+
+    def __init__(self, sp, entity_id='https://login.jh.edu/idp/shibboleth'):
+        super().__init__(sp, entity_id=entity_id)
+        
     def get_entity_id(self):
         return 'https://login.jh.edu/idp/shibboleth'
 
