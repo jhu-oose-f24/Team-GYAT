@@ -26,7 +26,6 @@ class JHUServiceProvider(ServiceProvider):
         return CustomAssertionConsumer.as_view('acs', self)
     
     def create_blueprint(self):
-        current_app.logger.info("Custom create_blueprint() called")
         bp = Blueprint('jhu_saml2_sp', __name__)
         bp.route('/login/', methods=['GET'], endpoint='login')(self.login)
         bp.route('/logout/', methods=['GET'], endpoint='logout')(self.logout)
