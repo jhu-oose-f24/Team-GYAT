@@ -1,6 +1,7 @@
 from flask_saml2.sp import ServiceProvider
 from flask_saml2.utils import certificate_from_file, private_key_from_file
 from config import Config
+from custom_views import CustomACSView
 
 class JHUServiceProvider(ServiceProvider):
     def get_sp_entity_id(self):
@@ -17,6 +18,9 @@ class JHUServiceProvider(ServiceProvider):
 
     def get_sp_certificate(self):
         return certificate_from_file("certs/cert.pem")
+
+    def get_acs_view(self):
+        return CustomACSView.as_view(self.acs_view_name, sp=self)
     
 # Instantiate the service provider
 service_provider = JHUServiceProvider()
