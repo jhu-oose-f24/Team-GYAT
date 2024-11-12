@@ -1,4 +1,4 @@
-from flask_saml2.sp.views import AssertionConsumer as BaseAssertionConsumer
+from flask_saml2.sp.views import AssertionConsumer
 from flask import request, current_app
 from werkzeug.exceptions import BadRequest
 
