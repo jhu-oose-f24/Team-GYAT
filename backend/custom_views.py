@@ -1,6 +1,8 @@
-# custom_views.py
+import logging
 from flask_saml2.sp.views import AssertionConsumer
 from flask import request, current_app
+
+logger = logging.getLogger(__name__)
 
 class CustomAssertionConsumer(AssertionConsumer):
     def post(self):
