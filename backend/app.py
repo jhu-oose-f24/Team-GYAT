@@ -31,11 +31,11 @@ def create_app():
 
     # Initialize extensions
     db.init_app(app)
-
     # Register routes and blueprints
     register_routes(app)
     app.register_blueprint(service_provider.create_blueprint(), url_prefix='/sso')
-
+    logging.basicConfig(level=logging.DEBUG)
+    app.logger.setLevel(logging.DEBUG)
     @app.route('/')
     def home():
         return "Welcome to Task Market!"
@@ -44,7 +44,7 @@ def create_app():
         logging.debug("Request Headers: %s", request.headers)
         logging.debug("Request Body: %s", request.get_data())
         logging.debug("Form Data: %s", request.form)
-        
+
     @app.errorhandler(Exception)
     def handle_exception(e):
         app.logger.exception("Unhandled Exception: %s", e)
