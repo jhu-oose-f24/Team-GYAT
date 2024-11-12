@@ -33,7 +33,9 @@ def create_app():
     db.init_app(app)
     # Register routes and blueprints
     register_routes(app)
-    app.register_blueprint(service_provider.create_blueprint('jhu_saml2_sp'), url_prefix='/sso')
+
+    app.register_blueprint(service_provider.create_blueprint(), url_prefix='/sso')
+
     logging.basicConfig(level=logging.DEBUG)
     app.logger.setLevel(logging.DEBUG)
     @app.route('/')
