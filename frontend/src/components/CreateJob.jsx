@@ -54,12 +54,13 @@ function CreateJob() {
 
         // limit max price to 0.01 ETH for now
         const priceValue = parseFloat(jobPrice);
-        if (isNaN(priceValue) || priceValue <= 0 || priceValue > 0.01) {
-            alert("Price must be positive and less than or equal to 0.01 ETH");
+        if (isNaN(priceValue) || priceValue <= 0 || priceValue > 100) {
+            alert("Price must be positive and less than or equal to 100 ETH");
             setIsSubmitting(false);
             return;
         }
 
+        console.log(priceValue);
 
         // If the user has selected a file, append it to the FormData object
         if (jobPhoto) {
@@ -69,11 +70,16 @@ function CreateJob() {
         try {
             // deploy contract to blockchain
             if (typeof window.ethereum !== 'undefined') {
-                await window.ethereum.request({ method: 'eth_requestAccounts' });
+                console.log('eth found');
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                console.log(accounts);
+
+                console.log('eth req account');
 
                 const provider = new BrowserProvider(window.ethereum);
                 const signer = await provider.getSigner();
                 const provider_address = await signer.getAddress();
+                console.log(provider_address);
 
                 const factory = new ContractFactory(JobContractABI, JobContractBytecode, signer);
                 const jobPriceWei = ethers.parseEther(jobPrice);
