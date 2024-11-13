@@ -47,6 +47,10 @@ export default function NavBar() {
     navigate('/createJob');
   };
 
+  const activeContracts = () => {
+    navigate('/activeContracts');
+  };
+
   return (
     <Box sx={{ flexGrow: 1}}>
       <AppBar position="static" sx = {{  bgcolor: '#68ACE5' }}>
@@ -66,8 +70,9 @@ export default function NavBar() {
           >
             <Link to="/">JHU Marketplace</Link>
           </Typography>
-          <Button color="inherit" onClick={createJob}> Become a Seller</Button>
-          <Button color="inherit" onClick={profilePage}> Profile</Button>
+          <Button color="inherit" onClick={createJob}>Become a Seller</Button>
+          <Button color="inherit" onClick={activeContracts}>Active Contracts</Button>
+          <Button color="inherit" onClick={profilePage}>Profile</Button>
           {walletAddress ? (
             <p>Signed in as {walletAddress.substr(0, 6)}...</p>
             ) : (
