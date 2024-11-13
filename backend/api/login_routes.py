@@ -3,6 +3,7 @@ import logging
 from flask_saml2.sp.idphandler import ResponseParser
 from base64 import b64decode
 import xml.etree.ElementTree as ET
+
 login_bp = Blueprint('login_bp', __name__)
 logging.basicConfig(level=logging.DEBUG)
 
@@ -35,8 +36,13 @@ def acs():
         # Parse it with ElementTree if necessary
         response_xml = ET.fromstring(decoded_response)
         
-        # Initialize the parser with the XML tree
-        response_parser = ResponseParser(response_xml)
+        # Load the IdP's certificate
+        idp_certificate_path = app.config['SAML2_IDENTITY_PROVIDERS'][0]['OPTIONS']['certificate']
+        with open(idp_certificate_path, 'r') as cert_file:
+            idp_certificate = cert_file.read()
+        
+        # Initialize the parser with the XML tree and the IdP certificate
+        response_parser = ResponseParser(response_xml, certificate=idp_certificate)
 
         # Log all attributes and information extracted
         logging.debug(f"SAML Response Attributes: {response_parser.attributes}")
@@ -46,16 +52,15 @@ def acs():
         if response_parser.is_signed():
             user_info = response_parser.attributes
             session['user'] = user_info
-            logging.debug(f"User {user_info.get('first_name')} authenticated successfully")
+            logging.debug(f"User {user_info.get('givenname')} authenticated successfully")
             return redirect(request.form.get('RelayState', url_for('home')))
         else:
-            logging.error("Invalid SAML Response: Not signed")
+            logging.error("Invalid SAML Response: Not signed or signature verification failed")
             return "Unauthorized", 401
 
     except Exception as e:
         logging.error(f"Error processing SAML response: {e}")
         return "Server Error", 500
-
     
 @login_bp.route('/logout/')
 def logout():
