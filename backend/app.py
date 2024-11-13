@@ -66,9 +66,9 @@ def create_app():
     with app.app_context():
         db.create_all()
         seed_tags()
-        print("Registered Routes:")
+        print("Registered Routes:", flush=True)
         for rule in app.url_map.iter_rules():
-            print(f"{rule.endpoint}: {rule.rule}")
+            print(f"{rule.endpoint}: {rule.rule}", flush=True)
 
     return app
 
