@@ -12,7 +12,7 @@ import { Box } from '@mui/material';
 import { ethers, BrowserProvider } from "ethers";
 import JobContractJSON from "../contract/artifact/JobContract.json";
 
-const Job = ({ jobId }) => {
+const Job = ({ jobId, onRequest }) => {
   const [jobData, setJobData] = React.useState({});
   const [open, setOpen] = React.useState(false);
 
@@ -21,7 +21,7 @@ const Job = ({ jobId }) => {
 
   const handleRequestService = async () => {
       try {
-
+          requestService();
           const JobContractABI = JobContractJSON.abi;
 
           if (typeof window.ethereum !== "undefined") {
@@ -61,6 +61,7 @@ const Job = ({ jobId }) => {
               if (response.ok) {
                   console.log("job accepted successfully");
                   handleClose();
+                  
               } else {
                   console.error("error accepting job");
                   console.error(response);
@@ -89,6 +90,11 @@ const Job = ({ jobId }) => {
     }
     fetchJobData();
   }, [jobId]);
+
+  const requestService = () => {
+    handleClose();
+    onRequest(jobData);
+  }
 
   const modalStyle = {
     position: 'absolute',

@@ -16,6 +16,7 @@ const JobFeed = () => {
   const [filter, setFilter] = React.useState('');
   const [filteredJobs, setFilteredJobs] = React.useState([]);
   const [tagFilter, setTagFilter] = React.useState('');
+  const [requestedJobs, setRequestedJobs] = React.useState([]);
 
   const tagList = [
     { value: 'Tutoring', label: 'Tutoring' },
@@ -41,6 +42,11 @@ const JobFeed = () => {
     }
     fetchJobs();
   }, []);
+
+  const handleRequestJob = (job) => {
+    setRequestedJobs([...requestedJobs, job]); 
+    setJobs(jobs.filter(j => j.job_id !== job.job_id)); 
+  }
 
   /*
   Filter jobs based on the selected rp
@@ -117,6 +123,17 @@ const JobFeed = () => {
       </FormControl>
       <Divider style={{ margin: '20px 0' }} />
       
+      {/* Requested jobs section */}
+      <Typography variant="h6" sx={{ marginLeft: 10, marginTop: 7, fontWeight: 'bold', fontFamily: 'Roboto' }}>Current Requested Jobs:</Typography>
+      <Grid container spacing={{ xs: 2, md: 5 }} columns={{ xs: 4, sm: 8, md: 12 }} sx={{ marginTop: 5, paddingX: 10 }}>
+        {requestedJobs.map((item) => (
+          <Grid size={{ xs: 2, sm: 4, md: 4 }}>
+            <Job jobId={item.job_id} />
+          </Grid>
+        ))}
+      </Grid>
+      
+      <Divider sx = {{ marginTop: 9 }} />
       <Grid
         container spacing={{ xs: 2, md: 5 }} columns={{ xs: 4, sm: 8, md: 12 }}
         sx={{ marginTop: 10, paddingX: 10 }} // Margin top and horizontal padding
@@ -124,7 +141,7 @@ const JobFeed = () => {
         {filteredJobs.map((item, index) => (
 
           <Grid size={{ xs: 2, sm: 4, md: 4 }}>
-            <Job jobId={item.job_id} />
+            <Job jobId={item.job_id} onRequest={handleRequestJob} />
           </Grid>
         ))}
       </Grid>
