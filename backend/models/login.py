@@ -7,6 +7,8 @@ from models import db
 from config import Config
 
 class MyServiceProvider(ServiceProvider):
+
+    blueprint_name = 'saml'
     def get_sp_entity_id(self):
         return Config.SAML2_SP['entity_id']
 
@@ -25,6 +27,11 @@ class MyServiceProvider(ServiceProvider):
     def get_idp_configs(self):
         return Config.SAML2_IDENTITY_PROVIDERS
 
+    def create_blueprint(self):
+        bp = super().create_blueprint()
+        bp.name = 'saml'
+        return bp
+    
     def login_successful(self, user_info):
         """
         Called when the SAML assertion is valid and authentication is successful.
