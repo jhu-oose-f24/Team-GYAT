@@ -1,7 +1,8 @@
-from flask import Blueprint, request, redirect, url_for, session
-from models.login import sp
-from flask_saml2.sp.idphandler import ResponseParser
+from flask import Blueprint, redirect, request, session, url_for
 import logging
+from flask_saml2.sp.idphandler import ResponseParser
+from base64 import b64decode
+import xml.etree.ElementTree as ET
 login_bp = Blueprint('login_bp', __name__)
 logging.basicConfig(level=logging.DEBUG)
 
@@ -14,26 +15,33 @@ def login():
 @login_bp.route('/sso/acs/', methods=['POST'])
 def acs():
     logging.debug("Handling SAML Response at ACS endpoint")
+    
+    # Obtain the SAML response
     saml_response = request.form.get('SAMLResponse')
     if not saml_response:
         logging.error("Missing SAMLResponse in the request")
         return "Bad Request: Missing SAMLResponse", 400
 
-    relay_state = request.form.get('RelayState', url_for('home'))
-
+    # Decode and parse the SAML response
     try:
-        # Decode and parse the SAML response
-        decoded_response = sp.decode_saml_string(saml_response)  # Assuming decode_saml_string is available
-        response_parser = ResponseParser(decoded_response)       # Initialize ResponseParser with the decoded SAML response
+        # Decode SAML response from Base64
+        decoded_response = b64decode(saml_response)
+        # Parse it with ElementTree if necessary
+        response_xml = ET.fromstring(decoded_response)
+        
+        # Initialize the parser with the XML tree
+        response_parser = ResponseParser(response_xml)
 
-        if response_parser.is_signed():                          # Check if the response is signed
-            user_info = response_parser.attributes               # Retrieve user attributes
-            session['user'] = user_info                          # Store user session
+        # Check if the response is signed and retrieve user information
+        if response_parser.is_signed():
+            user_info = response_parser.attributes
+            session['user'] = user_info
             logging.debug(f"User {user_info.get('first_name')} authenticated successfully")
-            return redirect(relay_state)
+            return redirect(request.form.get('RelayState', url_for('home')))
         else:
             logging.error("Invalid SAML Response: Not signed")
             return "Unauthorized", 401
+
     except Exception as e:
         logging.error(f"Error processing SAML response: {e}")
         return "Server Error", 500
