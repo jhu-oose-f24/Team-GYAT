@@ -35,13 +35,12 @@ def create_app():
 
     # Initialize extensions
     db.init_app(app)
-    login_manager= LoginManager()
-    login_manager.init_app(app)
-    login_manager.login_view = 'login_bp.login'
 
     # Register routes and blueprints
     register_routes(app)
-
+    login_manager= LoginManager()
+    login_manager.init_app(app)
+    login_manager.login_view = 'login_bp.login'
     app.register_blueprint(sp.create_blueprint(), url_prefix='/saml')
 
     logging.basicConfig(level=logging.DEBUG)

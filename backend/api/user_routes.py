@@ -95,3 +95,12 @@ def get_user(user_id):
         return jsonify({"error": "User not found"}), 404
     user_data = {'user_id': user.user_id, 'username': user.username, 'fullname': user.fullname, 'year': user.year, 'email': user.email}
     return jsonify(user_data)
+
+
+@user_bp.route('/logout/')
+@login_required
+def user_logout():
+    # Logs out the user
+    logout_user()
+    flash("You have been logged out.", "info")
+    return redirect(url_for('login_bp.login'))
