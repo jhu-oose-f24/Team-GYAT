@@ -1,5 +1,5 @@
-from flask_saml2.sp.idphandler import IdentityProviderHandler
+from flask_saml2.sp.idphandler import IdPHandler
 
-class JHUIdentityProvider(IdentityProviderHandler):
+class JHUIdentityProvider(IdPHandler):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
