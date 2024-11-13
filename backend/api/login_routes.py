@@ -1,5 +1,5 @@
 from flask import Blueprint, redirect, url_for
-from login import sp
+from models.login import sp
 
 login_bp = Blueprint('login_bp', __name__)
 
