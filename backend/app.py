@@ -2,7 +2,7 @@ import pymysql
 import os
 import logging
 pymysql.install_as_MySQLdb()
-
+from flask_login import LoginManager
 from flask import Flask, request
 from flask_cors import CORS
 from config import Config
@@ -10,6 +10,10 @@ from models import db
 from api import register_routes
 from models.Tag import Tag
 from models.login import service_provider
+from models.login import sp
+from api.login_routes import login_bp
+from api.user_routes import user_bp
+from models.User import User
 
 def seed_tags():
     predefined_tags = ["Tutoring", "Cleaning", "Shopping", "Dorm Service", "Other"]
@@ -31,10 +35,14 @@ def create_app():
 
     # Initialize extensions
     db.init_app(app)
+    login_manager= LoginManager()
+    login_manager.init_app(app)
+    login_manager.login_view = 'login_bp.login'
+
     # Register routes and blueprints
     register_routes(app)
 
-    app.register_blueprint(service_provider.create_blueprint(), url_prefix='/sso')
+    app.register_blueprint(sp.create_blueprint(), url_prefix='/saml')
 
     logging.basicConfig(level=logging.DEBUG)
     app.logger.setLevel(logging.DEBUG)
@@ -46,6 +54,11 @@ def create_app():
         logging.debug("Request Headers: %s", request.headers)
         logging.debug("Request Body: %s", request.get_data())
         logging.debug("Form Data: %s", request.form)
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        # Loads the user from the database
+        return User.query.get(int(user_id))
 
     @app.errorhandler(Exception)
     def handle_exception(e):
