@@ -37,7 +37,7 @@ fi
 
 # start mysql container
 echo "Starting MySQL container..."
-docker-compose up -d
+docker compose up -d
 
 sleep 20
 
@@ -94,6 +94,15 @@ CREATE TABLE IF NOT EXISTS ConversationParticipants (
     PRIMARY KEY (conversation_id, user_id),
     FOREIGN KEY (conversation_id) REFERENCES Conversations(conversation_id),
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
+);
+CREATE TABLE IF NOT EXISTS JobInteractions (
+    interaction_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    job_id INT,
+    interaction_type ENUM('request')
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (job_id) REFERENCES Jobs(job_id)
 );
 "
 
