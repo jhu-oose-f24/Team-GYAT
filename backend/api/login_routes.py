@@ -27,33 +27,31 @@ def acs():
         logging.error("Missing SAMLResponse in the request")
         return "Bad Request: Missing SAMLResponse", 400
 
-    # Decode and parse the SAML response
+    # Decode the SAML response
     try:
-        # Decode SAML response from Base64 and then convert it to a string
-        decoded_response = b64decode(saml_response).decode('utf-8')
-        logging.debug(f"Decoded SAML Response: {decoded_response}")
-        
-        # Parse it with ElementTree now that it's a proper string
-        response_xml = ET.fromstring(decoded_response)
-        
+        # Decode SAML response from Base64 to a UTF-8 string
+        decoded_response = b64decode(saml_response).decode('utf-8', errors='ignore')
+        logging.debug(f"Decoded SAML Response: {decoded_response}")  # Keep for debugging
+
         # Load the IdP's certificate from the current application context
         idp_config = current_app.config['SAML2_IDENTITY_PROVIDERS'][0]['OPTIONS']
         idp_certificate_path = idp_config['certificate']
         with open(idp_certificate_path, 'r') as cert_file:
             idp_certificate = cert_file.read()
         
-        # Initialize the parser with the XML tree and the IdP certificate
-        response_parser = ResponseParser(response_xml, certificate=idp_certificate)
+        # Initialize the parser with the raw SAML response string and the IdP certificate
+        response_parser = ResponseParser(decoded_response, certificate=idp_certificate)
 
         # Log all attributes and information extracted
         logging.debug(f"SAML Response Attributes: {response_parser.attributes}")
-        logging.debug(f"SAML Response XML: {ET.tostring(response_xml, encoding='unicode')}")
+        # The `response_parser.attributes` call retrieves attributes from the SAML response
 
         # Check if the response is signed and retrieve user information
         if response_parser.is_signed():
             user_info = response_parser.attributes
             session['user'] = user_info
-            logging.debug(f"User {user_info.get('givenname')} authenticated successfully")
+            logging.debug(f"User authenticated successfully with info: {user_info}")
+            # Redirect to either the RelayState or the home page
             return redirect(request.form.get('RelayState', url_for('home')))
         else:
             logging.error("Invalid SAML Response: Not signed or signature verification failed")
