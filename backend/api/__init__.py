@@ -4,7 +4,7 @@ def register_routes(app):
     from api.conversation_routes import conversation_bp
     from api.message_routes import message_bp
     from api.login_routes import login_bp
-    from models.login import service_provider
+    from models.login import sp
 
     app.register_blueprint(user_bp)
     app.register_blueprint(job_bp)

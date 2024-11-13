@@ -9,7 +9,6 @@ from config import Config
 from models import db
 from api import register_routes
 from models.Tag import Tag
-from models.login import service_provider
 from models.login import sp
 from api.login_routes import login_bp
 from api.user_routes import user_bp
