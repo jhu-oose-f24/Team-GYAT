@@ -2,7 +2,7 @@ from flask_saml2.sp import ServiceProvider
 from flask_saml2.utils import certificate_from_file, private_key_from_file
 from flask import redirect, url_for, flash
 from flask_login import login_user
-from models.user import User
+from models.User import User
 from models import db
 from config import Config
 
