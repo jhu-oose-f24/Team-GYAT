@@ -29,11 +29,11 @@ def acs():
 
     # Decode and parse the SAML response
     try:
-        # Decode SAML response from Base64
-        decoded_response = b64decode(saml_response)
-        logging.debug(f"Decoded SAML Response: {decoded_response.decode('utf-8', errors='ignore')}")  # Decode to a string for readability
+        # Decode SAML response from Base64 and then convert it to a string
+        decoded_response = b64decode(saml_response).decode('utf-8')
+        logging.debug(f"Decoded SAML Response: {decoded_response}")
         
-        # Parse it with ElementTree if necessary
+        # Parse it with ElementTree now that it's a proper string
         response_xml = ET.fromstring(decoded_response)
         
         # Load the IdP's certificate from the current application context
