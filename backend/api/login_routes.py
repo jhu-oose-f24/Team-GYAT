@@ -13,27 +13,33 @@ def login():
 @login_bp.route('/sso/acs/', methods=['POST'])
 def acs():
     logging.debug("Handling SAML Response at ACS endpoint")
-    # Get the SAML response from the request
     saml_response = request.form.get('SAMLResponse')
     if not saml_response:
         logging.error("Missing SAMLResponse in the request")
         return "Bad Request: Missing SAMLResponse", 400
 
-    # Handle missing RelayState gracefully
     relay_state = request.form.get('RelayState', url_for('home'))
 
-    # Process the SAML response using your SAML library
-    authn_response = sp.parse_authn_response(saml_response, binding='urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST')
-    if authn_response.is_valid():
-        user_info = authn_response.get_identity()
-        # Log the user in, create a session, etc.
-        # For example:
-        session['user'] = user_info
-        logging.debug(f"User {user_info.get('first_name')} authenticated successfully")
-        return redirect(relay_state)
-    else:
-        logging.error("Invalid SAML Response")
-        return "Unauthorized", 401
+    # Obtain IdPHandler from ServiceProvider
+    idp_handler = sp.get_idp_handler()  # Ensure this matches your ServiceProvider's method
+    
+    # Decode and validate SAML response
+    try:
+        decoded_response = idp_handler.decode_saml_string(saml_response)
+        if idp_handler.validate_response(decoded_response):
+            response_parser = idp_handler.get_response_parser(decoded_response)
+            user_info = response_parser.attributes  # Extract user attributes
+
+            # Log user in or create a session with user information
+            session['user'] = user_info
+            logging.debug(f"User {user_info.get('first_name')} authenticated successfully")
+            return redirect(relay_state)
+        else:
+            logging.error("Invalid SAML Response")
+            return "Unauthorized", 401
+    except Exception as e:
+        logging.error(f"Error processing SAML response: {e}")
+        return "Server Error", 500
     
 @login_bp.route('/logout/')
 def logout():
