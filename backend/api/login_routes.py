@@ -1,5 +1,6 @@
 from flask import Blueprint, request, redirect, url_for, session
 from models.login import sp
+from flask_saml2.sp.idphandler import ResponseParser
 import logging
 login_bp = Blueprint('login_bp', __name__)
 logging.basicConfig(level=logging.DEBUG)
@@ -20,22 +21,18 @@ def acs():
 
     relay_state = request.form.get('RelayState', url_for('home'))
 
-    # Obtain IdPHandler from ServiceProvider
-    idp_handler = sp.get_idp_handler()  # Ensure this matches your ServiceProvider's method
-    
-    # Decode and validate SAML response
     try:
-        decoded_response = idp_handler.decode_saml_string(saml_response)
-        if idp_handler.validate_response(decoded_response):
-            response_parser = idp_handler.get_response_parser(decoded_response)
-            user_info = response_parser.attributes  # Extract user attributes
+        # Decode and parse the SAML response
+        decoded_response = sp.decode_saml_string(saml_response)  # Assuming decode_saml_string is available
+        response_parser = ResponseParser(decoded_response)       # Initialize ResponseParser with the decoded SAML response
 
-            # Log user in or create a session with user information
-            session['user'] = user_info
+        if response_parser.is_signed():                          # Check if the response is signed
+            user_info = response_parser.attributes               # Retrieve user attributes
+            session['user'] = user_info                          # Store user session
             logging.debug(f"User {user_info.get('first_name')} authenticated successfully")
             return redirect(relay_state)
         else:
-            logging.error("Invalid SAML Response")
+            logging.error("Invalid SAML Response: Not signed")
             return "Unauthorized", 401
     except Exception as e:
         logging.error(f"Error processing SAML response: {e}")
