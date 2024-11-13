@@ -16,6 +16,10 @@ def login():
 def acs():
     logging.debug("Handling SAML Response at ACS endpoint")
     
+    # Log all headers, form data, and other request details for debugging
+    logging.debug(f"Request headers: {request.headers}")
+    logging.debug(f"Request form data: {request.form}")
+    
     # Obtain the SAML response
     saml_response = request.form.get('SAMLResponse')
     if not saml_response:
@@ -26,11 +30,17 @@ def acs():
     try:
         # Decode SAML response from Base64
         decoded_response = b64decode(saml_response)
+        logging.debug(f"Decoded SAML Response: {decoded_response.decode('utf-8', errors='ignore')}")  # Decode to a string for readability
+        
         # Parse it with ElementTree if necessary
         response_xml = ET.fromstring(decoded_response)
         
         # Initialize the parser with the XML tree
         response_parser = ResponseParser(response_xml)
+
+        # Log all attributes and information extracted
+        logging.debug(f"SAML Response Attributes: {response_parser.attributes}")
+        logging.debug(f"SAML Response XML: {ET.tostring(response_xml, encoding='unicode')}")
 
         # Check if the response is signed and retrieve user information
         if response_parser.is_signed():
@@ -45,6 +55,7 @@ def acs():
     except Exception as e:
         logging.error(f"Error processing SAML response: {e}")
         return "Server Error", 500
+
     
 @login_bp.route('/logout/')
 def logout():
