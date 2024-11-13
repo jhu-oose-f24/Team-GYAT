@@ -11,10 +11,7 @@ class JobRecommender:
         """
         self.db_config = db_config
         self.interaction_weights = {
-            'view': 1.0,
-            'search': 2.0,
-            'apply': 3.0,
-            'complete': 4.0
+            'request': 1.0,
         }
         
     def get_db_connection(self):
