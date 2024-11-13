@@ -134,5 +134,3 @@ Click on it, and fill out the fields there to post your job/service, and it
 should be displayed on the job feed now when clicking navigating back
 to the main page.
 
-## Known bugs
-Props rendering is almost done, we are having a merge conflict problem with the new addition with the addition of descriptions into the database and once that is resolved we will have individual props rendering
