@@ -3,7 +3,7 @@ import os
 import logging
 pymysql.install_as_MySQLdb()
 from flask_login import LoginManager
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from flask_cors import CORS
 from config import Config
 from models import db
@@ -57,7 +57,10 @@ def create_app():
     def load_user(user_id):
         # Loads the user from the database
         return User.query.get(int(user_id))
-
+    
+    @app.route('/favicon.ico')
+    def favicon():
+        return send_from_directory('static', 'favicon.ico')
     @app.errorhandler(Exception)
     def handle_exception(e):
         app.logger.exception("Unhandled Exception: %s", e)
