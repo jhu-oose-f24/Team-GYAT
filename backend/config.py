@@ -8,8 +8,8 @@ class Config:
     # SAML Configurations
     SAML2_SP = {
         'entity_id': 'https://task-market-7ba3283496a7.herokuapp.com',
-        'acs_url': 'https://task-market-7ba3283496a7.herokuapp.com/saml/acs/',
-        'sls_url': 'https://task-market-7ba3283496a7.herokuapp.com/saml/sls/',
+        'acs_url': 'https://task-market-7ba3283496a7.herokuapp.com/sso/acs/',
+        'sls_url': 'https://task-market-7ba3283496a7.herokuapp.com/sso/sls/',
         'certificate': os.path.join(BASE_DIR, 'certs', 'sp_certificate.pem'),
         'private_key': os.path.join(BASE_DIR, 'certs', 'sp_private_key.pem'),
     }

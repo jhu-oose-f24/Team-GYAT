@@ -1,6 +1,7 @@
 from flask import Blueprint, redirect, url_for
 from models.login import sp
 import logging
+
 login_bp = Blueprint('login_bp', __name__)
 logging.basicConfig(level=logging.DEBUG)
 
@@ -8,14 +9,16 @@ logging.basicConfig(level=logging.DEBUG)
 def login():
     logging.debug("Redirecting to SAML login")
     # Redirect to the SAML login using the correct endpoint
-    return redirect(url_for('saml.login'))
+    return redirect(url_for('sp.login'))
 
 @login_bp.route('/logout/')
 def logout():
+    logging.debug("Redirecting to SAML logout")
     # Redirect to the SAML logout using the correct endpoint
-    return redirect(url_for('saml.logout'))
+    return redirect(url_for('sp.logout'))
 
 @login_bp.route('/metadata/')
 def metadata():
+    logging.debug("Providing SAML metadata")
     # Provide SP metadata XML using the SAML provider's metadata rendering
     return sp.render_metadata()
