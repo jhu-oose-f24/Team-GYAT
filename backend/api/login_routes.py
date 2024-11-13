@@ -27,24 +27,25 @@ def acs():
         logging.error("Missing SAMLResponse in the request")
         return "Bad Request: Missing SAMLResponse", 400
 
-    # Decode the SAML response
     try:
-        # Decode SAML response from Base64 to a UTF-8 string
-        decoded_response = b64decode(saml_response).decode('utf-8', errors='ignore')
-        logging.debug(f"Decoded SAML Response: {decoded_response}")  # Keep for debugging
+        # Decode the SAML response from Base64 (keeping as bytes)
+        decoded_response = b64decode(saml_response)
+        logging.debug(f"Decoded SAML Response (bytes): {decoded_response}")
 
-        # Load the IdP's certificate from the current application context
+        # Parse the XML directly from bytes to avoid encoding issues
+        response_xml = ET.fromstring(decoded_response)
+        
+        # Load the IdP's certificate
         idp_config = current_app.config['SAML2_IDENTITY_PROVIDERS'][0]['OPTIONS']
         idp_certificate_path = idp_config['certificate']
         with open(idp_certificate_path, 'r') as cert_file:
             idp_certificate = cert_file.read()
         
-        # Initialize the parser with the raw SAML response string and the IdP certificate
-        response_parser = ResponseParser(decoded_response, certificate=idp_certificate)
+        # Initialize the parser with the XML tree and the IdP certificate
+        response_parser = ResponseParser(response_xml, certificate=idp_certificate)
 
-        # Log all attributes and information extracted
+        # Log attributes and other details
         logging.debug(f"SAML Response Attributes: {response_parser.attributes}")
-        # The `response_parser.attributes` call retrieves attributes from the SAML response
 
         # Check if the response is signed and retrieve user information
         if response_parser.is_signed():
@@ -60,7 +61,7 @@ def acs():
     except Exception as e:
         logging.error(f"Error processing SAML response: {e}")
         return "Server Error", 500
-    
+
 @login_bp.route('/logout/')
 def logout():
     # Redirect to the SAML logout using the correct endpoint
