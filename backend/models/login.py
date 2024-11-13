@@ -2,13 +2,12 @@ from flask_saml2.sp import ServiceProvider
 from flask_saml2.utils import certificate_from_file, private_key_from_file
 from flask import redirect, url_for, flash
 from flask_login import login_user
-from models.User import User
+from models.user import User
 from models import db
 from config import Config
+import os
 
 class MyServiceProvider(ServiceProvider):
-
-    blueprint_name = 'saml'
     def get_sp_entity_id(self):
         return Config.SAML2_SP['entity_id']
 
@@ -19,14 +18,16 @@ class MyServiceProvider(ServiceProvider):
         return Config.SAML2_SP['sls_url']
 
     def get_sp_private_key(self):
-        return private_key_from_file(Config.SAML2_SP['private_key'])
+        private_key_path = Config.SAML2_SP['private_key']
+        return private_key_from_file(private_key_path)
 
     def get_sp_certificate(self):
-        return certificate_from_file(Config.SAML2_SP['certificate'])
+        certificate_path = Config.SAML2_SP['certificate']
+        return certificate_from_file(certificate_path)
 
     def get_idp_configs(self):
         return Config.SAML2_IDENTITY_PROVIDERS
-
+    
     def create_blueprint(self):
         bp = super().create_blueprint()
         bp.name = 'saml'
