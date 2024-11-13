@@ -1,4 +1,4 @@
-from flask import Blueprint, redirect, request, session, url_for
+from flask import Blueprint, redirect, request, session, url_for, current_app
 import logging
 from flask_saml2.sp.idphandler import ResponseParser
 from base64 import b64decode
@@ -36,8 +36,9 @@ def acs():
         # Parse it with ElementTree if necessary
         response_xml = ET.fromstring(decoded_response)
         
-        # Load the IdP's certificate
-        idp_certificate_path = app.config['SAML2_IDENTITY_PROVIDERS'][0]['OPTIONS']['certificate']
+        # Load the IdP's certificate from the current application context
+        idp_config = current_app.config['SAML2_IDENTITY_PROVIDERS'][0]['OPTIONS']
+        idp_certificate_path = idp_config['certificate']
         with open(idp_certificate_path, 'r') as cert_file:
             idp_certificate = cert_file.read()
         
