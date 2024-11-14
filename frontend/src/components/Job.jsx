@@ -89,6 +89,7 @@ const Job = ({ jobId, onRequest, requested }) => {
         const response = await axios.get(`https://task-market-7ba3283496a7.herokuapp.com/jobs/${jobId}`);
         setJobData(response.data);
       } catch (err) {
+        console.log('here');
         console.log(err.message);
       }
     }
