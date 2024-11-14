@@ -28,16 +28,18 @@ def acs():
         return "Bad Request: Missing SAMLResponse", 400
 
     try:
-        # Decode the SAML response from Base64 to bytes
-        decoded_response = b64decode(saml_response)
-
-        # Remove any XML encoding declaration (like <?xml version="1.0" encoding="UTF-8"?>)
-        decoded_response_str = decoded_response.decode('utf-8', errors='ignore')
-        if decoded_response_str.startswith('<?xml'):
-            decoded_response_str = decoded_response_str.split('?>', 1)[-1].strip()
+        # Decode the SAML response from Base64 to UTF-8 string
+        decoded_response = b64decode(saml_response).decode('utf-8', errors='ignore')
         
-        # Parse the XML
-        response_xml = ET.fromstring(decoded_response_str)
+        # Remove any XML encoding declaration if it exists
+        if decoded_response.startswith('<?xml'):
+            decoded_response = decoded_response.split('?>', 1)[-1].strip()
+
+        # Log decoded response for debugging purposes
+        logging.debug(f"Decoded SAML Response (string): {decoded_response}")
+
+        # Parse the XML response as a string
+        response_xml = ET.fromstring(decoded_response)
 
         # Load the IdP's certificate
         idp_config = current_app.config['SAML2_IDENTITY_PROVIDERS'][0]['OPTIONS']
