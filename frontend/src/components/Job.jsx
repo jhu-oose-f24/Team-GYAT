@@ -54,7 +54,7 @@ const Job = ({ jobId, onRequest, requested }) => {
 
         const formData = new FormData();
         formData.append("status", "accepted");
-        const response = await fetch(`http://127.0.0.1:5000/jobs/${jobId}/status`,
+        const response = await fetch(`https://task-market-7ba3283496a7.herokuapp.com/jobs/${jobId}/status`,
           { method: "PUT", body: formData }
         );
 
@@ -86,7 +86,7 @@ const Job = ({ jobId, onRequest, requested }) => {
   React.useEffect(() => {
     const fetchJobData = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:5000/jobs/${jobId}`);
+        const response = await axios.get(`https://task-market-7ba3283496a7.herokuapp.com/jobs/${jobId}`);
         setJobData(response.data);
       } catch (err) {
         console.log(err.message);
@@ -123,7 +123,7 @@ const Job = ({ jobId, onRequest, requested }) => {
           <CardMedia
             component="img"
             height="140"
-            image={`http://127.0.0.1:5000/${jobData.image_url}`}
+            image={`https://task-market-7ba3283496a7.herokuapp.com/${jobData.image_url}`}
             alt={jobData.title || 'Job image'}
           />
           <CardContent sx={{ height: '100%' }}>
@@ -166,7 +166,7 @@ const Job = ({ jobId, onRequest, requested }) => {
           <CardMedia
             component="img"
             height="300"
-            image={`http://127.0.0.1:5000/${jobData.image_url}`}
+            image={`https://task-market-7ba3283496a7.herokuapp.com/${jobData.image_url}`}
             alt={jobData.title || 'Job image'}
             sx={{ borderRadius: 1, marginBottom: 2 }}
           />

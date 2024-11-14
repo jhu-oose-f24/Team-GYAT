@@ -33,7 +33,7 @@ const JobFeed = () => {
   React.useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:5000/jobs');
+        const response = await axios.get('https://task-market-7ba3283496a7.herokuapp.com/jobs');
         setJobs(response.data);
         console.log(response.data);
       } catch (err) {

@@ -22,7 +22,7 @@ function CreateJob() {
         // Fetch available tags when component mounts
         const fetchTags = async () => {
             try {
-                const response = await fetch('http://127.0.0.1:5000/tags');
+                const response = await fetch('https://task-market-7ba3283496a7.herokuapp.com/tags');
                 const data = await response.json();
                 setTags(data);
             } catch (error) {
@@ -98,7 +98,7 @@ function CreateJob() {
                 throw new Error("metamask not found");
             }
 
-            const response = await fetch('http://127.0.0.1:5000/jobs', {
+            const response = await fetch('https://task-market-7ba3283496a7.herokuapp.com/jobs', {
                 method: 'POST',
                 body: formData, // Pass FormData directly
             });
