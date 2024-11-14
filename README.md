@@ -139,5 +139,5 @@ The frontend of the app is deployed at https://scintillating-llama-2cea82.netlif
 
 ## Known bugs
 User login/register is still in the process of being implemented. We have spent a total of 15 hours on it this iteration, with Andrew mostly putting in the work trying to implement it. He has contacted IT to get it working with the JHU SSO option, and is still running into bugs since the provided code on the course website is not easily transferable to Flask. Once we get this working, we will be able to implement the rest of our features easily in our next iteration.
-
+The smart search feature started in iteration four is also not completed fully as of right now as it relies on having a userID to keep track of interactions/requests a user makes. Once the login problems are sorted, this will not be blocked.
 
