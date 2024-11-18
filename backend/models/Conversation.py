@@ -1,4 +1,4 @@
-from app import db
+from models import db
 from datetime import datetime, timezone
 from sqlalchemy import asc
 from collections import defaultdict
