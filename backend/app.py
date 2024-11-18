@@ -10,6 +10,7 @@ from api import register_routes
 from models import db
 from models.Tag import Tag
 
+GOOGLE_CLIENT_ID = '122127252195-02c10jh336ucqb3d80pma4galdafg6dg.apps.googleusercontent.com'
 def seed_tags():
     predefined_tags = ["Tutoring", "Cleaning", "Shopping", "Dorm Service", "Other"]
     

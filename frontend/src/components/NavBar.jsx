@@ -11,11 +11,14 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { styled, alpha } from '@mui/material/styles';
 import InputBase from '@mui/material/InputBase';
+import GoogleAuthButtons from "./GoogleAuthButtons.jsx"
+import { useAuth } from './AuthContext';
 
 export default function NavBar() {
   const [walletAddress, setWalletAddress] = React.useState("");
   const navigate = useNavigate();
-
+const { isSignedIn, userName, userEmail, userId } = useAuth();
+  console.log(userName + " " + userEmail + " " + userId);
   async function requestAccount() {
     if (window.ethereum) {
       try {
@@ -73,6 +76,7 @@ export default function NavBar() {
             ) : (
             <Button color="inherit" onClick={handleConnect}>Login</Button>
           )}
+          <GoogleAuthButtons />
         </Toolbar>
       </AppBar>
     </Box>
