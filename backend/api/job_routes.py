@@ -90,6 +90,7 @@ def create_job():
         db.session.commit()
         return jsonify({"message": "Job created successfully", "job_id": new_job.job_id}), 201
     except SQLAlchemyError as e:
+        print(e)
         db.session.rollback()
         return jsonify({"error": str(e)}), 400
     except Exception as e:
@@ -97,7 +98,7 @@ def create_job():
         return jsonify({"error": str(e)}), 400
 
 def is_valid_status(status):
-    valid_statuses = ['open', 'accepted', 'provider_done', 'requester_approved', 'finished']
+    valid_statuses = ['open', 'accepted', 'provider_done', 'finished']
     return status in valid_statuses
 
 # get all jobs
