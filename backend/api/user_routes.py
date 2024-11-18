@@ -16,6 +16,13 @@ def create_user():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
+
+@user_bp.route('/users/details', methods=['POST'])
+def get_user_details():
+    user_ids = request.json.get('user_ids', [])
+    users = User.query.filter(User.user_id.in_(user_ids)).all()
+    return jsonify({user.user_id: user.full_name for user in users})
+
 #get all users
 @user_bp.route('/users', methods=['GET'])
 def get_users():

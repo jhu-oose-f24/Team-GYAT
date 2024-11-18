@@ -41,12 +41,18 @@ def get_conversations_for_user(user_id):
         .filter(ConversationParticipants.user_id == user_id)
         .all()
     )
-    result = [{
-        "conversation_id": conversation.conversation_id,
-        "created_at": conversation.created_at,
-        "updated_at": conversation.updated_at,
-        "participant_ids": [p.user_id for p in conversation.participants]
-    } for conversation in conversations]
+    result = [
+        {
+            "conversation_id": conversation.conversation_id,
+            "created_at": conversation.created_at,
+            "updated_at": conversation.updated_at,
+            "participants": [
+                {"user_id": participant.user_id, "full_name": participant.full_name}
+                for participant in conversation.participants
+            ]
+        }
+        for conversation in conversations
+    ]
     return jsonify(result)
 
 # Get all messages in a conversation
