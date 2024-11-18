@@ -17,7 +17,7 @@ def create_user():
         return jsonify({"error": str(e)}), 400
 
 
-@user_bp.route('users/details', methods=['POST'])
+@user_bp.route('/users/details', methods=['POST'])
 def get_user_details():
     user_ids = request.json.get('user_ids', [])
     users = User.query.filter(User.user_id.in_(user_ids)).all()
