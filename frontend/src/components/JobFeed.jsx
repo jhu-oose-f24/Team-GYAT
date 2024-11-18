@@ -33,7 +33,7 @@ const JobFeed = () => {
   React.useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:5000/jobs');
+        const response = await axios.get('https://task-market-7ba3283496a7.herokuapp.com/jobs');
         setJobs(response.data);
         console.log(response.data);
       } catch (err) {
@@ -127,8 +127,8 @@ const JobFeed = () => {
       <Typography variant="h6" sx={{ marginLeft: 10, marginTop: 7, fontWeight: 'bold', fontFamily: 'Roboto' }}>Current Requested Jobs:</Typography>
       <Grid container spacing={{ xs: 2, md: 5 }} columns={{ xs: 4, sm: 8, md: 12 }} sx={{ marginTop: 5, paddingX: 10 }}>
         {requestedJobs.map((item) => (
-          <Grid size={{ xs: 2, sm: 4, md: 4 }}>
-            <Job jobId={item.job_id} />
+          <Grid key = {item.job_id} size={{ xs: 2, sm: 4, md: 4 }}>
+            <Job jobId={item.job_id} requested={true} onRequest={() => {}}/>
           </Grid>
         ))}
       </Grid>
@@ -139,9 +139,8 @@ const JobFeed = () => {
         sx={{ marginTop: 10, paddingX: 10 }} // Margin top and horizontal padding
       >
         {filteredJobs.map((item, index) => (
-
-          <Grid size={{ xs: 2, sm: 4, md: 4 }}>
-            <Job jobId={item.job_id} onRequest={handleRequestJob} />
+          <Grid key = {item.job_id} size={{ xs: 2, sm: 4, md: 4 }}>
+            <Job jobId={item.job_id} onRequest={handleRequestJob} requested={false}/>
           </Grid>
         ))}
       </Grid>
