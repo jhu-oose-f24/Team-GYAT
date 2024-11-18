@@ -1,7 +1,7 @@
 import pymysql
 pymysql.install_as_MySQLdb()
 import os
-from flask import Flask, request, jsonify
+from flask import Flask, request, send_from_directory, jsonify
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import inspect
@@ -31,6 +31,13 @@ def create_app():
 
     # associate db with app
     db.init_app(app)
+    @app.route('/')
+    def home():
+        return "Welcome to Task Market!", 200
+    
+    @app.route('/favicon.ico')
+    def favicon():
+        return send_from_directory('static', 'favicon.ico')
 
     # register endpoints
     register_routes(app)
