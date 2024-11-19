@@ -31,14 +31,15 @@ const Messages = () => {
       const response = await axios.get(`https://task-market-7ba3283496a7.herokuapp.com/users/${userId}/conversations`);
       const conversations = response.data;
 
-      // Map participants to include full names
-      const conversationsWithNames = conversations.map(conversation => ({
-        ...conversation,
-        participants: conversation.participants.map(participant => ({
-          ...participant,
-          full_name: participant.fullname || `User ${participant.user_id}`, // Use `fullname` from API
-        })),
-      }));
+      // Map participants to include full names and set display names
+      const conversationsWithNames = conversations.map(conversation => {
+        const otherParticipants = conversation.participants.filter(participant => participant.user_id !== userId);
+        const displayName = otherParticipants.map(p => p.fullname || `User ${p.user_id}`).join(', '); // Create a display name
+        return {
+          ...conversation,
+          displayName,
+        };
+      });
 
       setConversations(conversationsWithNames);
     } catch (error) {
@@ -53,7 +54,7 @@ const Messages = () => {
         ...message,
         sender_name: conversations
           .find(c => c.conversation_id === conversationId)
-          ?.participants.find(p => p.user_id === message.sender_id)?.full_name || `User ${message.sender_id}`,
+          ?.participants.find(p => p.user_id === message.sender_id)?.fullname || `User ${message.sender_id}`,
       }));
       setMessages(messagesWithNames);
     } catch (error) {
@@ -94,27 +95,28 @@ const Messages = () => {
           <Typography variant="h6" sx={{ padding: '1rem' }}>Conversations</Typography>
           <Divider />
           <List>
-            {conversations.map((conversation) => (
-              <ListItem 
-                button 
-                key={conversation.conversation_id} 
-                onClick={() => handleConversationClick(conversation)}
-                selected={selectedConversation && selectedConversation.conversation_id === conversation.conversation_id}
-              >
-                <ListItemText 
-                  primary={`Conversation ${conversation.conversation_id}`} 
-                  secondary={`Participants: ${conversation.participants.map(p => p.full_name).join(', ')}`} 
-                />
-              </ListItem>
+            {conversations.map((conversation, index) => (
+              <React.Fragment key={conversation.conversation_id}>
+                <ListItem
+                  button
+                  onClick={() => handleConversationClick(conversation)}
+                  selected={selectedConversation && selectedConversation.conversation_id === conversation.conversation_id}
+                >
+                  <ListItemText
+                    primary={conversation.displayName || 'Unnamed Conversation'}
+                  />
+                </ListItem>
+                {index < conversations.length - 1 && <Divider />} {/* Add Divider */}
+              </React.Fragment>
             ))}
-          </List>
+          </List>]
         </Box>
 
         {/* Messages Area */}
         <Box sx={{ width: '70%', padding: '1rem', height: '80vh', overflowY: 'auto' }}>
           {selectedConversation ? (
             <>
-              <Typography variant="h6">Conversation {selectedConversation.conversation_id}</Typography>
+              <Typography variant="h6">Conversation with {selectedConversation.displayName}</Typography>
               <Divider sx={{ marginBottom: '1rem' }} />
               {/* Messages List */}
               <Box sx={{ marginBottom: '1rem' }}>
