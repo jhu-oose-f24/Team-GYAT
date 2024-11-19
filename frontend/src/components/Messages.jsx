@@ -31,36 +31,18 @@ const Messages = () => {
       const response = await axios.get(`https://task-market-7ba3283496a7.herokuapp.com/users/${userId}/conversations`);
       const conversations = response.data;
 
-      // Extract unique user IDs from all conversations
-      const userIds = [...new Set(conversations.flatMap(c => c.participant_ids.map(p => p.user_id)))];
-
-      // Fetch user details (full names)
-      const userDetails = await fetchUserDetails(userIds);
-
-      // Map user IDs to full names and update conversations
+      // Map participants to include full names
       const conversationsWithNames = conversations.map(conversation => ({
         ...conversation,
-        participant_ids: conversation.participant_ids.map(participant => ({
+        participants: conversation.participants.map(participant => ({
           ...participant,
-          full_name: userDetails[participant.user_id] || `User ${participant.user_id}`
-        }))
+          full_name: participant.fullname || `User ${participant.user_id}`, // Use `fullname` from API
+        })),
       }));
 
       setConversations(conversationsWithNames);
     } catch (error) {
       console.error('Error fetching conversations:', error);
-    }
-  };
-
-  const fetchUserDetails = async (userIds) => {
-    try {
-      const response = await axios.post(`https://task-market-7ba3283496a7.herokuapp.com/user/details`, {
-        user_ids: userIds
-      });
-      return response.data; // Returns { user_id: full_name, ... }
-    } catch (error) {
-      console.error('Error fetching user details:', error);
-      return {};
     }
   };
 
@@ -71,7 +53,7 @@ const Messages = () => {
         ...message,
         sender_name: conversations
           .find(c => c.conversation_id === conversationId)
-          ?.participant_ids.find(p => p.user_id === message.sender_id)?.full_name || `User ${message.sender_id}`
+          ?.participants.find(p => p.user_id === message.sender_id)?.full_name || `User ${message.sender_id}`,
       }));
       setMessages(messagesWithNames);
     } catch (error) {
@@ -120,8 +102,8 @@ const Messages = () => {
                 selected={selectedConversation && selectedConversation.conversation_id === conversation.conversation_id}
               >
                 <ListItemText 
-                primary={`Conversation ${conversation.conversation_id}`} 
-                secondary={`Participants: ${conversation.participants.map(p => p.full_name).join(', ')}`} 
+                  primary={`Conversation ${conversation.conversation_id}`} 
+                  secondary={`Participants: ${conversation.participants.map(p => p.full_name).join(', ')}`} 
                 />
               </ListItem>
             ))}
