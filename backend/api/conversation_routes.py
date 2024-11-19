@@ -32,7 +32,6 @@ def create_conversation():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
     
-# Get all conversations for a user
 @conversation_bp.route('/users/<int:user_id>/conversations', methods=['GET'])
 def get_conversations_for_user(user_id):
     conversations = (
@@ -47,7 +46,7 @@ def get_conversations_for_user(user_id):
             "created_at": conversation.created_at,
             "updated_at": conversation.updated_at,
             "participants": [
-                {"user_id": participant.user_id, "full_name": participant.full_name}
+                {"user_id": participant.user_id, "fullname": participant.fullname}  # Use 'fullname' instead of 'full_name'
                 for participant in conversation.participants
             ]
         }
