@@ -15,7 +15,7 @@ load_dotenv()
 S3_KEY = os.getenv("AWS_ACCESS_KEY_ID")
 S3_SECRET = os.getenv("AWS_SECRET_ACCESS_KEY")
 S3_BUCKET = os.getenv("S3_BUCKET_NAME")
-S3_REGION = "your-region"  # e.g., "us-east-1"
+S3_REGION = "us-east-2" 
 S3_BASE_URL = f"https://{S3_BUCKET}.s3.{S3_REGION}.amazonaws.com/"
 
 s3_client = boto3.client(
