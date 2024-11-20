@@ -17,8 +17,7 @@ import { useAuth } from './AuthContext';
 export default function NavBar() {
   const [walletAddress, setWalletAddress] = React.useState("");
   const navigate = useNavigate();
-const { isSignedIn, userName, userEmail, userId } = useAuth();
-  console.log(userName + " " + userEmail + " " + userId);
+  const { isSignedIn, userName, userEmail, userId } = useAuth();
   async function requestAccount() {
     if (window.ethereum) {
       try {
