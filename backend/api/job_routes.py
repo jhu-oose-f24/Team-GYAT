@@ -5,7 +5,26 @@ from models.Tag import Tag
 from utils.image_utils import save_image_from_base64
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.utils import secure_filename
+import boto3
+from botocore.exceptions import NoCredentialsError
+from dotenv import load_dotenv
 import os
+
+load_dotenv()
+
+S3_KEY = os.getenv("AWS_ACCESS_KEY_ID")
+S3_SECRET = os.getenv("AWS_SECRET_ACCESS_KEY")
+S3_BUCKET = os.getenv("S3_BUCKET_NAME")
+S3_REGION = "your-region"  # e.g., "us-east-1"
+S3_BASE_URL = f"https://{S3_BUCKET}.s3.{S3_REGION}.amazonaws.com/"
+
+s3_client = boto3.client(
+    's3',
+    aws_access_key_id=S3_KEY,
+    aws_secret_access_key=S3_SECRET,
+    region_name=S3_REGION
+)
+
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
 UPLOAD_FOLDER = 'static/images/'
@@ -20,7 +39,9 @@ job_bp = Blueprint('job_bp', __name__)
 
 # @job_bp.route('/jobs', methods=['POST'])
 # def create_job():
-#     data = request.get_json()
+#     data = request.form
+#     file = request.files.get('image', None)
+
 #     try:
 #         provider_id = int(data['provider_id'])
 #         title = data['title']
@@ -28,18 +49,25 @@ job_bp = Blueprint('job_bp', __name__)
 #         status = data['status']
 #         price = float(data['price'])
 #         smart_contract_address = data.get('smart_contract_address', None)
+        
+#         tag_name = data.get('tag_name', None)
+
+#         # Handle the file upload
 #         image_path = None
-#         if 'image_base64' in data and data['image_base64']:
-#             image_base64 = data['image_base64']
-#             image_path = save_image_from_base64(image_base64)
+#         if file and allowed_file(file.filename):
+#             filename = secure_filename(file.filename)
+#             image_path = os.path.join(UPLOAD_FOLDER, filename)
+#             file.save(image_path)
 #         else:
-#             image_path = 'images/default_image.jpg' 
-#             new_job = Job(
+#             image_path = 'static/images/default_image.jpg'
+
+#         new_job = Job(
 #             provider_id=provider_id,
 #             title=title,
 #             description=description,
 #             status=status,
 #             price=price,
+#             tag_name=tag_name,
 #             smart_contract_address=smart_contract_address,
 #             image=image_path
 #         )
@@ -47,9 +75,11 @@ job_bp = Blueprint('job_bp', __name__)
 #         db.session.commit()
 #         return jsonify({"message": "Job created successfully", "job_id": new_job.job_id}), 201
 #     except SQLAlchemyError as e:
+#         print(e)
 #         db.session.rollback()
 #         return jsonify({"error": str(e)}), 400
 #     except Exception as e:
+#         print(e)
 #         return jsonify({"error": str(e)}), 400
 
 @job_bp.route('/jobs', methods=['POST'])
@@ -64,18 +94,26 @@ def create_job():
         status = data['status']
         price = float(data['price'])
         smart_contract_address = data.get('smart_contract_address', None)
-        
         tag_name = data.get('tag_name', None)
 
-        # Handle the file upload
-        image_path = None
+        # Handle file upload
+        image_url = None
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            image_path = os.path.join(UPLOAD_FOLDER, filename)
-            file.save(image_path)
+            try:
+                s3_client.upload_fileobj(
+                    file,
+                    S3_BUCKET,
+                    filename,
+                    ExtraArgs={'ACL': 'public-read'}  # Ensure file is publicly accessible
+                )
+                image_url = f"{S3_BASE_URL}{filename}"
+            except NoCredentialsError as e:
+                return jsonify({"error": "AWS credentials not valid"}), 400
         else:
-            image_path = 'static/images/default_image.jpg'
+            image_url = f"{S3_BASE_URL}default_image.jpg"  # Default image URL in S3
 
+        # Create new job
         new_job = Job(
             provider_id=provider_id,
             title=title,
@@ -84,7 +122,7 @@ def create_job():
             price=price,
             tag_name=tag_name,
             smart_contract_address=smart_contract_address,
-            image=image_path
+            image=image_url
         )
         db.session.add(new_job)
         db.session.commit()
