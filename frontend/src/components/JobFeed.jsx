@@ -38,8 +38,8 @@ const JobFeed = () => {
       try {
         const response = await axios.get('https://task-market-7ba3283496a7.herokuapp.com/jobs');
         // Filter so you get all jobs where job.user_id != userId
-        const filteredJobs =  response.filter((job) => job.provider_id != userId);
-        setJobs(response.data);
+        const filteredJobs = response.data.filter((job) => job.provider_id != userId);
+        setJobs(filteredJobs);
         console.log(response.data);
       } catch (err) {
         console.log(err.message);
