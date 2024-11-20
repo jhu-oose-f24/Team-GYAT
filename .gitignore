@@ -3,3 +3,4 @@ venv
 *.pyc
 /static/images/*
 __pycache__/
+.env
