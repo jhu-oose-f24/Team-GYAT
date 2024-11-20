@@ -15,8 +15,6 @@ export default function NavBar() {
   const navigate = useNavigate();
   const { isSignedIn, userName, userEmail, userId } = useAuth();
 
-  console.log(userName + " " + userEmail + " " + userId);
-
   async function requestAccount() {
     if (window.ethereum) {
       try {

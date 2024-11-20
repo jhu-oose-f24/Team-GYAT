@@ -6,7 +6,7 @@ import { useEffect } from 'react';
 
 import JobContractJSON from '../contract/artifact/JobContract.json';
 import { ethers, ContractFactory, BrowserProvider } from "ethers";
-
+import { useAuth } from "./AuthContext";
 
 function CreateJob() {
     const [jobTitle, setJobTitle] = useState('');
@@ -16,7 +16,8 @@ function CreateJob() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [jobTag, setJobTag] = useState('');
     const [tags, setTags] = useState([]);
-
+    
+    const { userId } = useAuth();
 
     useEffect(() => {
         // Fetch available tags when component mounts
@@ -46,7 +47,7 @@ function CreateJob() {
         formData.append('description', jobDescription);
         formData.append('price', jobPrice);
         formData.append('status', 'open');
-        formData.append('provider_id', 1); // Assuming provider ID is hardcoded for now
+        formData.append('provider_id', userId); 
         formData.append('tag_name', jobTag);
 
 

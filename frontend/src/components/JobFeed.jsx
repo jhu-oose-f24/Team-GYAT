@@ -9,6 +9,7 @@ import Job from './Job';
 import NavBar from './NavBar';
 import SearchBar from "./SearchBar";
 import { Select, MenuItem, FormControl, InputLabel, Typography, Divider } from '@mui/material';
+import { useAuth } from "./AuthContext";
 
 const JobFeed = () => {
   const [jobs, setJobs] = React.useState([]);
@@ -17,6 +18,8 @@ const JobFeed = () => {
   const [filteredJobs, setFilteredJobs] = React.useState([]);
   const [tagFilter, setTagFilter] = React.useState('');
   const [requestedJobs, setRequestedJobs] = React.useState([]);
+
+  const { userId } = useAuth();
 
   const tagList = [
     { value: 'Tutoring', label: 'Tutoring' },
@@ -34,6 +37,8 @@ const JobFeed = () => {
     const fetchJobs = async () => {
       try {
         const response = await axios.get('https://task-market-7ba3283496a7.herokuapp.com/jobs');
+        // Filter so you get all jobs where job.user_id != userId
+        const filteredJobs =  response.filter((job) => job.provider_id != userId);
         setJobs(response.data);
         console.log(response.data);
       } catch (err) {
