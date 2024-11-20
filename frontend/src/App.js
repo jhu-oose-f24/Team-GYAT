@@ -7,6 +7,8 @@ import JobFeed from './components/JobFeed';
 import CreateJob from './components/CreateJob';
 import UserProfile from './components/userProfile';
 import { AuthProvider } from "./components/AuthContext";
+import Messages from './components/Messages';
+
 function App() {
 
   return (
@@ -16,6 +18,7 @@ function App() {
             <Route path = "/" element = {<JobFeed/>}/>
             <Route path = "/createJob" element = {<CreateJob/>}/>
             <Route path = "/userProfile" element = {<UserProfile/>}/>
+            <Route path="/messages" element={<Messages />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

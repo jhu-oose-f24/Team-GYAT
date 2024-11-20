@@ -7,17 +7,14 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import { styled, alpha } from '@mui/material/styles';
-import InputBase from '@mui/material/InputBase';
-import GoogleAuthButtons from "./GoogleAuthButtons.jsx"
+import GoogleAuthButtons from "./GoogleAuthButtons.jsx";
 import { useAuth } from './AuthContext';
 
 export default function NavBar() {
   const [walletAddress, setWalletAddress] = React.useState("");
   const navigate = useNavigate();
   const { isSignedIn, userName, userEmail, userId } = useAuth();
+
   async function requestAccount() {
     if (window.ethereum) {
       try {
@@ -25,12 +22,12 @@ export default function NavBar() {
           method: "eth_requestAccounts",
         });
         setWalletAddress(accounts[0]);
-        } catch (error) {
+      } catch (error) {
         console.log('Error connecting to MetaMask', error);
-        }
-      } else {
-        alert('MetaMask not detected');
       }
+    } else {
+      alert('MetaMask not detected');
+    }
   }
 
   async function handleConnect() {
@@ -39,7 +36,7 @@ export default function NavBar() {
       const provider = new ethers.BrowserProvider(window.ethereum);
       console.log(walletAddress);
     }
-  };
+  }
 
   const profilePage = () => {
     navigate('/userProfile');
@@ -49,9 +46,13 @@ export default function NavBar() {
     navigate('/createJob');
   };
 
+  const directMessages = () => {
+    navigate('/messages');
+  };
+
   return (
-    <Box sx={{ flexGrow: 1}}>
-      <AppBar position="static" sx = {{  bgcolor: '#68ACE5' }}>
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static" sx={{ bgcolor: '#68ACE5' }}>
         <Toolbar>
           <Typography
             variant="h6"
@@ -62,18 +63,29 @@ export default function NavBar() {
                 textDecoration: 'none',
               },
               '& a:hover': {
-                textDecoration: 'underline', 
+                textDecoration: 'underline',
               },
             }}
           >
             <Link to="/">JHU Marketplace</Link>
           </Typography>
-          <Button color="inherit" onClick={createJob}> Become a Seller</Button>
-          <Button color="inherit" onClick={profilePage}> Profile</Button>
+          <Button color="inherit" onClick={createJob}>
+            Become a Seller
+          </Button>
+          <Button color="inherit" onClick={profilePage}>
+            Profile
+          </Button>
+          <Button color="inherit" onClick={directMessages}>
+            Direct Messages
+          </Button>
           {walletAddress ? (
-            <p>Signed in as {walletAddress.substr(0, 6)}...</p>
-            ) : (
-            <Button color="inherit" onClick={handleConnect}>Login</Button>
+            <Typography sx={{ marginLeft: '1rem' }}>
+              Signed in as {walletAddress.substr(0, 6)}...
+            </Typography>
+          ) : (
+            <Button color="inherit" onClick={handleConnect}>
+              Login
+            </Button>
           )}
           <GoogleAuthButtons />
         </Toolbar>
