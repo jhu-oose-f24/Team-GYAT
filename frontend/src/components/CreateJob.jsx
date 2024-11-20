@@ -47,7 +47,7 @@ function CreateJob() {
         formData.append('description', jobDescription);
         formData.append('price', jobPrice);
         formData.append('status', 'open');
-        formData.append('provider_id', userId); // Assuming provider ID is hardcoded for now
+        formData.append('provider_id', userId); 
         formData.append('tag_name', jobTag);
 
 
