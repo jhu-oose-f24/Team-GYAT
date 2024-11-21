@@ -12,6 +12,8 @@ import {
 import NavBar from './NavBar';
 import axios from 'axios';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const Messages = () => {
   const [conversations, setConversations] = useState([]);
   const [selectedConversation, setSelectedConversation] = useState(null);
@@ -28,7 +30,7 @@ const Messages = () => {
 
   const fetchConversations = async () => {
     try {
-      const response = await axios.get(`https://task-market-7ba3283496a7.herokuapp.com/users/${userId}/conversations`);
+      const response = await axios.get(`${API_URL}/users/${userId}/conversations`);
       const conversations = response.data;
 
       // Map participants to include full names and set display names
@@ -49,7 +51,7 @@ const Messages = () => {
 
   const fetchMessages = async (conversationId) => {
     try {
-      const response = await axios.get(`https://task-market-7ba3283496a7.herokuapp.com/conversations/${conversationId}/messages`);
+      const response = await axios.get(`${API_URL}/conversations/${conversationId}/messages`);
       const messagesWithNames = response.data.map(message => ({
         ...message,
         sender_name: conversations
@@ -72,7 +74,7 @@ const Messages = () => {
 
     setIsSubmitting(true);
     try {
-      await axios.post(`https://task-market-7ba3283496a7.herokuapp.com/messages`, {
+      await axios.post(`${API_URL}/messages`, {
         text: messageText,
         sender_id: userId,
         conversation_id: selectedConversation.conversation_id,
@@ -88,7 +90,6 @@ const Messages = () => {
 
   return (
     <>
-      <NavBar />
       <Box sx={{ display: 'flex', marginTop: '2rem' }}>
         {/* Conversations List */}
         <Box sx={{ width: '30%', borderRight: '1px solid #ccc', height: '80vh', overflowY: 'auto' }}>

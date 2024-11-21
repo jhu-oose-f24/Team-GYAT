@@ -7,6 +7,9 @@ import { useEffect } from 'react';
 import JobContractJSON from '../contract/artifact/JobContract.json';
 import { ethers, ContractFactory, BrowserProvider } from "ethers";
 import { useAuth } from "./AuthContext";
+import { useWallet } from "./WalletContext";
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 function CreateJob() {
     const [jobTitle, setJobTitle] = useState('');
@@ -16,6 +19,7 @@ function CreateJob() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [jobTag, setJobTag] = useState('');
     const [tags, setTags] = useState([]);
+    const { walletAddress } = useWallet();
     
     const { userId } = useAuth();
 
@@ -23,7 +27,8 @@ function CreateJob() {
         // Fetch available tags when component mounts
         const fetchTags = async () => {
             try {
-                const response = await fetch('https://task-market-7ba3283496a7.herokuapp.com/tags');
+                console.log(API_URL);
+                const response = await fetch(`${API_URL}/tags`);
                 const data = await response.json();
                 setTags(data);
             } catch (error) {
@@ -51,6 +56,7 @@ function CreateJob() {
         formData.append('tag_name', jobTag);
 
 
+        console.log(userId);
         console.log(jobTag);
 
         // limit max price to 0.01 ETH for now
@@ -70,36 +76,27 @@ function CreateJob() {
 
         try {
             // deploy contract to blockchain
-            if (typeof window.ethereum !== 'undefined') {
-                console.log('eth found');
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                console.log(accounts);
-
-                console.log('eth req account');
-
-                const provider = new BrowserProvider(window.ethereum);
-                const signer = await provider.getSigner();
-                const provider_address = await signer.getAddress();
-                console.log(provider_address);
-
-                const factory = new ContractFactory(JobContractABI, JobContractBytecode, signer);
-                const jobPriceWei = ethers.parseEther(jobPrice);
-
-                const contract = await factory.deploy(
-                    provider_address,
-                    jobPriceWei
-                );
-
-                await contract.waitForDeployment();
-                formData.append("smart_contract_address", contract.target);
-
-            } else {
-                console.error("ETH provider not available");
-                alert("Install metamask or another eth wallet provider");
-                throw new Error("metamask not found");
+            if (!walletAddress) {
+                alert("Please connect ETH wallet to create job.");
+                throw new Error("Wallet not connected.");
             }
 
-            const response = await fetch('https://task-market-7ba3283496a7.herokuapp.com/jobs', {
+            console.log("using wallet address: ", walletAddress);
+            const provider = new BrowserProvider(window.ethereum);
+            const signer = await provider.getSigner();
+            const factory = new ContractFactory(JobContractABI, JobContractBytecode, signer);
+
+            const jobPriceWei = ethers.parseEther(jobPrice);
+
+            const contract = await factory.deploy(
+                walletAddress,
+                jobPriceWei
+            );
+            await contract.waitForDeployment();
+
+            formData.append("smart_contract_address", contract.target);
+
+            const response = await fetch(`${API_URL}/jobs`, {
                 method: 'POST',
                 body: formData, // Pass FormData directly
             });
@@ -117,7 +114,7 @@ function CreateJob() {
             } else {
                 // Handle errors
                 console.error('Error creating job');
-                console.error(response);
+                console.error(response.data);
             }
         } catch (error) {
             console.error('Error:', error);
@@ -133,7 +130,6 @@ function CreateJob() {
 
     return (
         <>
-            <NavBar />
             <Box
                 component="form"
                 onSubmit={handleSubmit}
