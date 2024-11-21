@@ -3,7 +3,7 @@ from models import db
 class User(db.Model):
     __tablename__ = 'Users'
 
-    user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.String(100), primary_key=True)
     username = db.Column(db.String(100), nullable=False)
     fullname = db.Column(db.String(100), nullable=False)
     year = db.Column(db.String(4), nullable=True)
@@ -14,7 +14,8 @@ class User(db.Model):
     jobs_requested = db.relationship('Job', foreign_keys='Job.requester_id', backref='requester', lazy=True)
     jobs_provided = db.relationship('Job', foreign_keys='Job.provider_id', backref='provider', lazy=True)
 
-    def __init__(self, username, fullname, year, email, password):
+    def __init__(self, user_id, username, fullname, year, email, password):
+        self.user_id = user_id
         self.username = username
         self.fullname = fullname
         self.year = year
