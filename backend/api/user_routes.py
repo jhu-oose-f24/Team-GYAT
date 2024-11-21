@@ -9,7 +9,13 @@ user_bp = Blueprint('user_bp', __name__)
 def create_user():
     data = request.get_json()
     try:
-        new_user = User(username=data['username'], fullname=data['fullname'], year=data['year'], email=data['email'], password=data['password'])
+        new_user = User(user_id=data['user_id'],
+                        username=data['username'], 
+                        fullname=data['fullname'], 
+                        year=data['year'], 
+                        email=data['email'], 
+                        password=data['password'])
+
         db.session.add(new_user)
         db.session.commit()
         return jsonify({"message": "User created successfully", "user_id": new_user.user_id}), 201

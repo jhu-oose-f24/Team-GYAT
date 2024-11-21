@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS Tag (
 );
 
 CREATE TABLE IF NOT EXISTS Users (
-    user_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id VARCHAR(100) PRIMARY KEY,
     fullname VARCHAR(100),
     year VARCHAR(100),
     username VARCHAR(100),
@@ -64,10 +64,10 @@ CREATE TABLE IF NOT EXISTS Jobs (
     status ENUM('open', 'accepted', 'provider_done', 'requester_approved', 'finished'),
     price FLOAT,
     smart_contract_address VARCHAR(255),
-    requester_id INT,
+    requester_id VARCHAR(100),
     tag_name VARCHAR(100),
     FOREIGN KEY (requester_id) REFERENCES Users(user_id),
-    provider_id INT,
+    provider_id VARCHAR(100),
     FOREIGN KEY (provider_id) REFERENCES Users(user_id),
     image VARCHAR(255)
 );
@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS Messages (
     message_id INT AUTO_INCREMENT PRIMARY KEY,
     text VARCHAR(500),
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    sender_id INT,
+    sender_id VARCHAR(100),
     conversation_id INT,
     FOREIGN KEY (sender_id) REFERENCES Users(user_id),
     FOREIGN KEY (conversation_id) REFERENCES Conversations(conversation_id)
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS Messages (
 
 CREATE TABLE IF NOT EXISTS ConversationParticipants (
     conversation_id INT,
-    user_id INT,
+    user_id VARCHAR(100),
     PRIMARY KEY (conversation_id, user_id),
     FOREIGN KEY (conversation_id) REFERENCES Conversations(conversation_id),
     FOREIGN KEY (user_id) REFERENCES Users(user_id)
