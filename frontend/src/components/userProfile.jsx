@@ -29,7 +29,6 @@ const UserProfile = () => {
 
   return (
     <>
-      <NavBar />
       <Card 
         sx={{ 
           maxWidth: 600, 

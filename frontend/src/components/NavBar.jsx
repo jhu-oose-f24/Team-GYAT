@@ -9,11 +9,12 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import GoogleAuthButtons from "./GoogleAuthButtons.jsx";
 import { useAuth } from './AuthContext';
+import { useWallet } from "./WalletContext";
 
 export default function NavBar() {
-  const [walletAddress, setWalletAddress] = React.useState("");
   const navigate = useNavigate();
   const { isSignedIn, userName, userEmail, userId } = useAuth();
+  const { walletAddress, setWalletAddress } = useWallet();
 
   async function requestAccount() {
     if (window.ethereum) {
@@ -36,6 +37,10 @@ export default function NavBar() {
       const provider = new ethers.BrowserProvider(window.ethereum);
       console.log(walletAddress);
     }
+  }
+
+  function disconnectWallet() {
+      setWalletAddress("");
   }
 
   const profilePage = () => {
@@ -69,22 +74,27 @@ export default function NavBar() {
           >
             <Link to="/">JHU Marketplace</Link>
           </Typography>
-          <Button color="inherit" onClick={createJob}>
+          <Button color="inherit" onClick={createJob} disabled={!isSignedIn}>
             Become a Seller
           </Button>
-          <Button color="inherit" onClick={profilePage}>
+          <Button color="inherit" onClick={profilePage} disabled={!isSignedIn}>
             Profile
           </Button>
-          <Button color="inherit" onClick={directMessages}>
+          <Button color="inherit" onClick={directMessages} disabled={!isSignedIn}>
             Direct Messages
           </Button>
           {walletAddress ? (
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px'}}>
             <Typography sx={{ marginLeft: '1rem' }}>
-              Signed in as {walletAddress.substr(0, 6)}...
+              Wallet Connected: {walletAddress.substr(0, 6)}...
             </Typography>
+            <Button color='inherit' onClick={disconnectWallet}>
+              Disconnect Wallet
+            </Button>
+            </Box>
           ) : (
             <Button color="inherit" onClick={handleConnect}>
-              Login
+              Connect Wallet
             </Button>
           )}
           <GoogleAuthButtons />

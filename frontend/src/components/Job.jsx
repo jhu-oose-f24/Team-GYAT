@@ -8,13 +8,17 @@ import Modal from '@mui/material/Modal';
 import Button from '@mui/material/Button';
 import axios from 'axios';
 import { Box } from '@mui/material';
+import { useWallet } from "./WalletContext";
 
 import { ethers, BrowserProvider } from "ethers";
 import JobContractJSON from "../contract/artifact/JobContract.json";
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const Job = ({ jobId, onRequest, requested }) => {
   const [jobData, setJobData] = React.useState({});
   const [open, setOpen] = React.useState(false);
+    const { walletAddress } = useWallet();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -23,11 +27,13 @@ const Job = ({ jobId, onRequest, requested }) => {
     try {
       const JobContractABI = JobContractJSON.abi;
 
-      if (typeof window.ethereum !== "undefined") {
-        await window.ethereum.request({ method: 'eth_requestAccounts' });
+      if (!walletAddress) {
+        alert("Please connect ETH wallet to request job.");
+        throw new Error("Wallet not connected.");
+      }
+
         const requester = new BrowserProvider(window.ethereum);
         const signer = await requester.getSigner();
-        const requester_address = await signer.getAddress();
 
         const contract = new ethers.Contract(
           jobData.smart_contract_address,
@@ -36,8 +42,10 @@ const Job = ({ jobId, onRequest, requested }) => {
 
         const provider_address = await contract.provider();
         const job_price = await contract.price();
+        console.log(`provider address ${provider_address}`);
+        console.log(`requester address ${walletAddress}`);
 
-        if (provider_address === requester_address) {
+        if (provider_address === walletAddress) {
           console.error(
             "provider and requester cannot have the same wallet address");
           alert("Provider and Requester wallet addresses must be different!");
@@ -53,7 +61,7 @@ const Job = ({ jobId, onRequest, requested }) => {
 
         const formData = new FormData();
         formData.append("status", "accepted");
-        const response = await fetch(`https://task-market-7ba3283496a7.herokuapp.com/jobs/${jobId}/status`,
+        const response = await fetch(`${API_URL}/jobs/${jobId}/status`,
           { method: "PUT", body: formData }
         );
 
@@ -66,11 +74,6 @@ const Job = ({ jobId, onRequest, requested }) => {
           console.error(response);
         }
 
-      } else {
-        console.error("ETH provider not available");
-        alert("Install Metamask or another eth wallet provider");
-        throw new Error("Metamask not found");
-      }
     } catch (error) {
       console.error(error);
     }
@@ -81,11 +84,13 @@ const Job = ({ jobId, onRequest, requested }) => {
       try { 
           const JobContractABI = JobContractJSON.abi;
 
-          if (typeof window.ethereum !== "undefined") {
-            await window.ethereum.request({ method: 'eth_requestAccounts' });
+          if (!walletAddress) {
+            alert("Please connect ETH wallet to complete job.");
+            throw new Error("Wallet not found");
+          }
+
             const provider = new BrowserProvider(window.ethereum);
             const signer = await provider.getSigner();
-            const provider_address = await signer.getAddress();
 
             const contract = new ethers.Contract(
               jobData.smart_contract_address,
@@ -95,7 +100,7 @@ const Job = ({ jobId, onRequest, requested }) => {
             const contract_provider_address = await contract.provider();
             const job_price = await contract.price();
 
-            if (provider_address !== contract_provider_address) {
+            if (walletAddress !== contract_provider_address) {
               console.error("provider wallet address doesn't match with contract");
               alert("Provider must use same wallet address as when contract was created!");
               throw new Error("Provider address mismatch");
@@ -120,11 +125,6 @@ const Job = ({ jobId, onRequest, requested }) => {
               console.error(response);
             }
 
-          } else {
-            console.error("ETH provider not available");
-            alert("Install Metamask or another eth wallet provider");
-            throw new Error("Metamask not found");
-          }
         } catch (error) {
           console.error(error);
     }
@@ -135,7 +135,7 @@ const Job = ({ jobId, onRequest, requested }) => {
   React.useEffect(() => {
     const fetchJobData = async () => {
       try {
-        const response = await axios.get(`https://task-market-7ba3283496a7.herokuapp.com/jobs/${jobId}`);
+        const response = await axios.get(`${API_URL}/jobs/${jobId}`);
         setJobData(response.data);
       } catch (err) {
         console.log('here');
@@ -173,7 +173,7 @@ const Job = ({ jobId, onRequest, requested }) => {
           <CardMedia
             component="img"
             height="140"
-            image={`https://task-market-7ba3283496a7.herokuapp.com/${jobData.image_url}`}
+            image={`${API_URL}/${jobData.image_url}`}
             alt={jobData.title || 'Job image'}
           />
           <CardContent sx={{ height: '100%' }}>
@@ -216,7 +216,7 @@ const Job = ({ jobId, onRequest, requested }) => {
           <CardMedia
             component="img"
             height="300"
-            image={`https://task-market-7ba3283496a7.herokuapp.com/${jobData.image_url}`}
+            image={`${API_URL}/${jobData.image_url}`}
             alt={jobData.title || 'Job image'}
             sx={{ borderRadius: 1, marginBottom: 2 }}
           />

@@ -10,6 +10,9 @@ import NavBar from './NavBar';
 import SearchBar from "./SearchBar";
 import { Select, MenuItem, FormControl, InputLabel, Typography, Divider } from '@mui/material';
 import { useAuth } from "./AuthContext";
+import { useNavigate } from "react-router-dom";
+
+const API_URL = process.env.REACT_APP_API_URL;
 
 const JobFeed = () => {
   const [jobs, setJobs] = React.useState([]);
@@ -19,7 +22,8 @@ const JobFeed = () => {
   const [tagFilter, setTagFilter] = React.useState('');
   const [requestedJobs, setRequestedJobs] = React.useState([]);
 
-  const { userId } = useAuth();
+  const { isSignedIn, userId } = useAuth();
+  const navigate = useNavigate();
 
   const tagList = [
     { value: 'Tutoring', label: 'Tutoring' },
@@ -34,9 +38,12 @@ const JobFeed = () => {
     { value: 'highToLow', label: 'Price (Ascending)' }
   ];
   React.useEffect(() => {
+      if (!isSignedIn) {
+          navigate('/');
+      }
     const fetchJobs = async () => {
       try {
-        const response = await axios.get('https://task-market-7ba3283496a7.herokuapp.com/jobs');
+        const response = await axios.get(`${API_URL}/jobs`);
         // Filter so you get all jobs where job.user_id != userId
         const filteredJobs = response.data.filter((job) => job.provider_id != userId);
         setJobs(filteredJobs);
@@ -46,7 +53,7 @@ const JobFeed = () => {
       }
     }
     fetchJobs();
-  }, []);
+  }, [userId, navigate]);
 
   const handleRequestJob = (job) => {
     setRequestedJobs([...requestedJobs, job]); 
@@ -95,7 +102,6 @@ const JobFeed = () => {
 
   return (
     <Box sx = {{ paddingBottom: 5 }}>
-      <NavBar />
       <SearchBar jobs={filteredJobs} onSearch={handleSearch} />
       <Typography variant="h4" sx={{ marginLeft: 10, marginTop: 7, fontWeight: 'bold', fontFamily: 'Roboto' }}>Services Offered:</Typography>
 
