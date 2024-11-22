@@ -29,6 +29,19 @@ const PendingJobs = () => {
       </Typography>
       <Typography variant="h8" sx=
         {{ marginLeft: 10, marginTop: 7, fontWeight: 'bold', fontFamily: 'Roboto' }}>
+        Open:
+      </Typography>
+      <Grid container spacing={{ xs: 2, md: 5 }} 
+                      columns={{ xs: 4, sm: 8, md: 12 }} 
+                      sx={{ marginTop: 5, paddingX: 10 }}>
+        {/* TODO job rendering logic requestedJobs.map((item) => (
+          <Grid key = {item.job_id} size={{ xs: 2, sm: 4, md: 4 }}>
+            <Job jobId={item.job_id} requested={true} onRequest={() => {}}/>
+          </Grid>
+        ))*/ }
+      </Grid>
+      <Typography variant="h8" sx=
+        {{ marginLeft: 10, marginTop: 7, fontWeight: 'bold', fontFamily: 'Roboto' }}>
         Awaiting Completion:
       </Typography>
       <Grid container spacing={{ xs: 2, md: 5 }} 
@@ -54,7 +67,7 @@ const PendingJobs = () => {
         ))*/ }
       </Grid>
       
-      <Divider sx = {{ marginTop: 9 }} />
+      <Divider sx = {{ marginTop: 12 }} />
       <Typography variant="h6" sx=
         {{ marginLeft: 10, marginTop: 7, marginBottom: 7, fontWeight: 'bold', fontFamily: 'Roboto' }}>
         Requested Jobs Pending:
