@@ -11,6 +11,8 @@ import Messages from './components/Messages';
 import LandingPage from "./components/LandingPage";
 import NavBar from "./components/NavBar";
 import { WalletProvider } from "./components/WalletContext";
+import CompletedJobs from "./components/CompletedJobs";
+import PendingJobs from "./components/PendingJobs";
 
 function App() {
   return (
@@ -24,6 +26,8 @@ function App() {
             <Route path = "/createJob" element = {<CreateJob/>}/>
             <Route path = "/userProfile" element = {<UserProfile/>}/>
             <Route path="/messages" element={<Messages />} />
+            <Route path="/CompletedJobs" element={<CompletedJobs />} />
+            <Route path="/PendingJobs" element={<PendingJobs />} />
         </Routes>
       </BrowserRouter>
       </WalletProvider>
