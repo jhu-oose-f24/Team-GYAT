@@ -43,6 +43,14 @@ export default function NavBar() {
       setWalletAddress("");
   }
 
+  const CompletedJobsPage = () => {
+      navigate('/CompletedJobs');
+  }
+
+  const PendingJobs = () => {
+      navigate('/PendingJobs');
+  }
+
   const profilePage = () => {
     navigate('/userProfile');
   };
@@ -82,6 +90,12 @@ export default function NavBar() {
           </Button>
           <Button color="inherit" onClick={directMessages} disabled={!isSignedIn}>
             Direct Messages
+          </Button>
+          <Button color="inherit" onClick={CompletedJobsPage} disabled={!isSignedIn}>
+            Completed Jobs
+          </Button>
+          <Button color="inherit" onClick={PendingJobs} disabled={!isSignedIn}>
+            Pending Jobs
           </Button>
           {walletAddress ? (
             <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px'}}>
