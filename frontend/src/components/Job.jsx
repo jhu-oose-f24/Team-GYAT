@@ -189,6 +189,11 @@ const Job = ({ jobId, onRequest, requested }) => {
             }}>
               {jobData.description}
             </Typography>
+            <Box sx = {{position: 'absolute', bottom: 16, left: 16}}>
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                Posted by: {jobData.provider_fullname || 'Unknown'}
+              </Typography>
+            </Box>
             <Box sx={{
               position: 'absolute',
               bottom: 16,
