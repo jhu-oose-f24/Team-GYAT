@@ -10,7 +10,7 @@ def user_login():
     data = request.get_json()
     print("Received data:", data)
     try:
-        user_id = data['user_id']
+        user_id = str(data['user_id'])
         user = User.query.get(user_id)
         if user:
             print("User found:", user.user_id)
