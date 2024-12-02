@@ -33,6 +33,8 @@ def create_app():
 
     # associate db with app
     db.init_app(app)
+
+    migrate = Migrate(app, db)
     @app.route('/')
     def home():
         return "Welcome to Task Market!", 200
@@ -47,8 +49,6 @@ def create_app():
     with app.app_context():
         db.create_all()  
         seed_tags()
-    
-    migrate = Migrate(app, db)
 
     return app
 
