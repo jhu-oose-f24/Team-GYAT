@@ -5,6 +5,31 @@ from models.User import User
 
 user_bp = Blueprint('user_bp', __name__)
 
+@user_bp.route('/users/login', methods=['POST'])
+def user_login():
+    data = request.get_json()
+    google_id = data.get('google_id')
+    name = data.get('name')
+    email = data.get('email')
+
+    if not google_id or not name or not email:
+        return jsonify({"error": "Missing user information"}), 400
+
+    user = User.query.filter_by(google_id=google_id).first()
+    if user:
+        user.name = name
+        user.email = email
+    else:
+        user = User(google_id=google_id, name=name, email=email)
+        db.session.add(user)
+
+    try:
+        db.session.commit()
+        return jsonify({"message": "User logged in", "user_id": user.user_id}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
 @user_bp.route('/users', methods=['POST'])
 def create_user():
     data = request.get_json()

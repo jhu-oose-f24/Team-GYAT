@@ -5,6 +5,7 @@ from flask import Flask, request, send_from_directory, jsonify
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import inspect
+from flask_migrate import Migrate
 
 from api import register_routes
 from models import db
@@ -32,6 +33,7 @@ def create_app():
 
     # associate db with app
     db.init_app(app)
+    migrate = Migrate(app, db)
     @app.route('/')
     def home():
         return "Welcome to Task Market!", 200
@@ -42,9 +44,13 @@ def create_app():
 
     # register endpoints
     register_routes(app)
-    with app.app_context():
-        db.create_all()  
-        seed_tags()
+    @app.before_first_request
+    def initialize_database():
+        # This function runs before the handling of the first request
+        with app.app_context():
+            # Seed the tags if they don't exist
+            if not Tag.query.first():
+                seed_tags()
 
     return app
 

@@ -4,11 +4,14 @@ class User(db.Model):
     __tablename__ = 'Users'
 
     user_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.String(100), nullable=False)
-    fullname = db.Column(db.String(100), nullable=False)
-    year = db.Column(db.String(4), nullable=True)
+    google_id = db.Column(db.String(50), unique=True, nullable=False)  # Add this field
+    name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), nullable=False)
-    password = db.Column(db.String(255), nullable=False)
+    # username = db.Column(db.String(100), nullable=False)
+    # fullname = db.Column(db.String(100), nullable=False)
+    # year = db.Column(db.String(4), nullable=True)
+    # email = db.Column(db.String(100), nullable=False)
+    # password = db.Column(db.String(255), nullable=False)
 
     # declare relationships to jobs requested and provided
     jobs_requested = db.relationship('Job', foreign_keys='Job.requester_id', backref='requester', lazy=True)
