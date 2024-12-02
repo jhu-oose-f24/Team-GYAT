@@ -3,6 +3,7 @@ from flask import Blueprint, request, jsonify
 from models import db
 from models.User import User
 
+
 user_bp = Blueprint('user_bp', __name__)
 
 @user_bp.route('/users/login', methods=['POST'])
@@ -10,7 +11,7 @@ def user_login():
     data = request.get_json()
     print("Received data:", data)
     try:
-        user_id = data['user_id']
+        user_id = str(data['user_id'])
         user = User.query.get(user_id)
         if user:
             print("User found:", user.user_id)
