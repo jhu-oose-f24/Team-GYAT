@@ -27,60 +27,15 @@ s3_client = boto3.client(
 
 
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-# UPLOAD_FOLDER = 'static/images/'
+UPLOAD_FOLDER = 'static/images/'
 
-# if not os.path.exists(UPLOAD_FOLDER):
-#     os.makedirs(UPLOAD_FOLDER)
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 job_bp = Blueprint('job_bp', __name__)
-
-# @job_bp.route('/jobs', methods=['POST'])
-# def create_job():
-#     data = request.form
-#     file = request.files.get('image', None)
-
-#     try:
-#         provider_id = int(data['provider_id'])
-#         title = data['title']
-#         description = data['description']
-#         status = data['status']
-#         price = float(data['price'])
-#         smart_contract_address = data.get('smart_contract_address', None)
-        
-#         tag_name = data.get('tag_name', None)
-
-#         # Handle the file upload
-#         image_path = None
-#         if file and allowed_file(file.filename):
-#             filename = secure_filename(file.filename)
-#             image_path = os.path.join(UPLOAD_FOLDER, filename)
-#             file.save(image_path)
-#         else:
-#             image_path = 'static/images/default_image.jpg'
-
-#         new_job = Job(
-#             provider_id=provider_id,
-#             title=title,
-#             description=description,
-#             status=status,
-#             price=price,
-#             tag_name=tag_name,
-#             smart_contract_address=smart_contract_address,
-#             image=image_path
-#         )
-#         db.session.add(new_job)
-#         db.session.commit()
-#         return jsonify({"message": "Job created successfully", "job_id": new_job.job_id}), 201
-#     except SQLAlchemyError as e:
-#         print(e)
-#         db.session.rollback()
-#         return jsonify({"error": str(e)}), 400
-#     except Exception as e:
-#         print(e)
-#         return jsonify({"error": str(e)}), 400
 
 @job_bp.route('/jobs', methods=['POST'])
 def create_job():
@@ -94,26 +49,18 @@ def create_job():
         status = data['status']
         price = float(data['price'])
         smart_contract_address = data.get('smart_contract_address', None)
+        
         tag_name = data.get('tag_name', None)
 
-        # Handle file upload
-        image_url = None
+        # Handle the file upload
+        image_path = None
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            try:
-                s3_client.upload_fileobj(
-                    file,
-                    S3_BUCKET,
-                    filename,
-                    ExtraArgs={'ACL': 'public-read'}  # Ensure file is publicly accessible
-                )
-                image_url = f"{S3_BASE_URL}{filename}"
-            except NoCredentialsError as e:
-                return jsonify({"error": "AWS credentials not valid"}), 400
+            image_path = os.path.join(UPLOAD_FOLDER, filename)
+            file.save(image_path)
         else:
-            image_url = f"{S3_BASE_URL}default_image.jpg"  # Default image URL in S3
+            image_path = 'static/images/default_image.jpg'
 
-        # Create new job
         new_job = Job(
             provider_id=provider_id,
             title=title,
@@ -122,7 +69,7 @@ def create_job():
             price=price,
             tag_name=tag_name,
             smart_contract_address=smart_contract_address,
-            image=image_url
+            image=image_path
         )
         db.session.add(new_job)
         db.session.commit()
@@ -134,6 +81,59 @@ def create_job():
     except Exception as e:
         print(e)
         return jsonify({"error": str(e)}), 400
+
+# @job_bp.route('/jobs', methods=['POST'])
+# def create_job():
+#     data = request.form
+#     file = request.files.get('image', None)
+
+#     try:
+#         provider_id = int(data['provider_id'])
+#         title = data['title']
+#         description = data['description']
+#         status = data['status']
+#         price = float(data['price'])
+#         smart_contract_address = data.get('smart_contract_address', None)
+#         tag_name = data.get('tag_name', None)
+
+#         # Handle file upload
+#         image_url = None
+#         if file and allowed_file(file.filename):
+#             filename = secure_filename(file.filename)
+#             try:
+#                 s3_client.upload_fileobj(
+#                     file,
+#                     S3_BUCKET,
+#                     filename,
+#                     ExtraArgs={'ACL': 'public-read'}  # Ensure file is publicly accessible
+#                 )
+#                 image_url = f"{S3_BASE_URL}{filename}"
+#             except NoCredentialsError as e:
+#                 return jsonify({"error": "AWS credentials not valid"}), 400
+#         else:
+#             image_url = f"{S3_BASE_URL}default_image.jpg"  # Default image URL in S3
+
+#         # Create new job
+#         new_job = Job(
+#             provider_id=provider_id,
+#             title=title,
+#             description=description,
+#             status=status,
+#             price=price,
+#             tag_name=tag_name,
+#             smart_contract_address=smart_contract_address,
+#             image=image_url
+#         )
+#         db.session.add(new_job)
+#         db.session.commit()
+#         return jsonify({"message": "Job created successfully", "job_id": new_job.job_id}), 201
+#     except SQLAlchemyError as e:
+#         print(e)
+#         db.session.rollback()
+#         return jsonify({"error": str(e)}), 400
+#     except Exception as e:
+#         print(e)
+#         return jsonify({"error": str(e)}), 400
 
 def is_valid_status(status):
     valid_statuses = ['open', 'accepted', 'provider_done', 'finished']
