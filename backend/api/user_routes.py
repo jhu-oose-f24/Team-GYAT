@@ -21,8 +21,8 @@ def user_login():
                 username=data['username'],
                 fullname=data['fullname'],
                 email=data['email'],
-                password=None,  
-                year=None
+                password='None',  
+                year='None'
             )
             db.session.add(user)
         db.session.commit()
