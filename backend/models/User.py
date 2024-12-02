@@ -8,7 +8,7 @@ class User(db.Model):
     fullname = db.Column(db.String(100), nullable=False)
     year = db.Column(db.String(4), nullable=True)
     email = db.Column(db.String(100), nullable=False)
-    password = db.Column(db.String(255), nullable=False)
+    password = db.Column(db.String(255), nullable=True)
 
     # declare relationships to jobs requested and provided
     jobs_requested = db.relationship('Job', foreign_keys='Job.requester_id', backref='requester', lazy=True)

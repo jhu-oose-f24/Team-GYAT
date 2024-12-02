@@ -5,6 +5,32 @@ from models.User import User
 
 user_bp = Blueprint('user_bp', __name__)
 
+@user_bp.route('/users/login', methods=['POST'])
+def user_login():
+    data = request.get_json()
+    try:
+        user_id = data['user_id']
+        user = User.query.get(user_id)
+        if user:
+            user.username = data.get('username', user.username)
+            user.fullname = data.get('fullname', user.fullname)
+            user.email = data.get('email', user.email)
+        else:
+            user = User(
+                user_id=user_id,
+                username=data['username'],
+                fullname=data['fullname'],
+                email=data['email'],
+                password=None,  
+                year=None
+            )
+            db.session.add(user)
+        db.session.commit()
+        return jsonify({"message": "User logged in", "user_id": user.user_id}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
 @user_bp.route('/users', methods=['POST'])
 def create_user():
     data = request.get_json()

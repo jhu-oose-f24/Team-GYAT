@@ -38,7 +38,6 @@ export const AuthProvider = ({ children }) => {
       username: decodedToken.given_name || decodedToken.name,
       fullname: decodedToken.name,
       email: decodedToken.email,
-      // Include other fields if needed
     })
     .then(response => {
       console.log('User data saved:', response.data);
