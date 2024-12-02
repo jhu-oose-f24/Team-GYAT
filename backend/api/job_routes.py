@@ -151,6 +151,7 @@ def get_jobs():
         'price': job.price,
         'smart_contract_address': job.smart_contract_address,
         'provider_id': job.provider_id,
+        'provider_name': job.provider.name if job.provider else None,
         'requester_id': job.requester_id,
         'image_url': job.image,
         'tag_name': job.tag_name
@@ -190,6 +191,7 @@ def get_job(job_id):
         'price': job.price,
         'smart_contract_address': job.smart_contract_address,
         'provider_id': job.provider_id,
+        'provider_name': job.provider.name if job.provider else None,
         'requester_id': job.requester_id,
         'image_url': job.image,
         'tag_name': job.tag_name

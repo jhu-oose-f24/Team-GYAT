@@ -3,7 +3,7 @@ import { TextField, Button, Box, Typography, MenuItem } from '@mui/material';
 import NavBar from './NavBar';
 
 import { useEffect } from 'react';
-
+import { useAuth } from './AuthContext';
 import JobContractJSON from '../contract/artifact/JobContract.json';
 import { ethers, ContractFactory, BrowserProvider } from "ethers";
 
@@ -16,7 +16,7 @@ function CreateJob() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [jobTag, setJobTag] = useState('');
     const [tags, setTags] = useState([]);
-
+    const { userId } = useAuth();
 
     useEffect(() => {
         // Fetch available tags when component mounts
@@ -46,7 +46,7 @@ function CreateJob() {
         formData.append('description', jobDescription);
         formData.append('price', jobPrice);
         formData.append('status', 'open');
-        formData.append('provider_id', 1); // Assuming provider ID is hardcoded for now
+        formData.append('provider_id', userId); // Assuming provider ID is hardcoded for now
         formData.append('tag_name', jobTag);
 
 

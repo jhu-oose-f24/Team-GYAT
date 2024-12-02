@@ -32,6 +32,14 @@ export const AuthProvider = ({ children }) => {
     setUserName(decodedToken.given_name || decodedToken.name);
     setUserEmail(decodedToken.email);
     setUserId(decodedToken.sub);
+
+    axios.post('https://your-backend-url/users/login', {
+      google_id: decodedToken.sub,
+      name: decodedToken.name,
+      email: decodedToken.email,
+    }).catch((error) => {
+      console.error('Error logging in:', error);
+    });
   };
 
   const signOut = () => {

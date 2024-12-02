@@ -16,6 +16,7 @@ class Job(db.Model):
     # foreign keys to reference users
     requester_id = db.Column(db.Integer, db.ForeignKey('Users.user_id'))
     provider_id = db.Column(db.Integer, db.ForeignKey('Users.user_id'))
+    provider = db.relationship('User', backref='jobs_provided', foreign_keys=[provider_id])
 
     def __init__(self, provider_id, title, description, status, price, tag_name, smart_contract_address, image):
         self.provider_id = provider_id

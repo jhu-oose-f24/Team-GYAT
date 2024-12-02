@@ -78,55 +78,55 @@ const Job = ({ jobId, onRequest, requested }) => {
   };
 
   const handleCompleteJob = async () => {
-      try { 
-          const JobContractABI = JobContractJSON.abi;
+    try {
+      const JobContractABI = JobContractJSON.abi;
 
-          if (typeof window.ethereum !== "undefined") {
-            await window.ethereum.request({ method: 'eth_requestAccounts' });
-            const provider = new BrowserProvider(window.ethereum);
-            const signer = await provider.getSigner();
-            const provider_address = await signer.getAddress();
+      if (typeof window.ethereum !== "undefined") {
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const provider = new BrowserProvider(window.ethereum);
+        const signer = await provider.getSigner();
+        const provider_address = await signer.getAddress();
 
-            const contract = new ethers.Contract(
-              jobData.smart_contract_address,
-              JobContractABI,
-              signer);
+        const contract = new ethers.Contract(
+          jobData.smart_contract_address,
+          JobContractABI,
+          signer);
 
-            const contract_provider_address = await contract.provider();
-            const job_price = await contract.price();
+        const contract_provider_address = await contract.provider();
+        const job_price = await contract.price();
 
-            if (provider_address !== contract_provider_address) {
-              console.error("provider wallet address doesn't match with contract");
-              alert("Provider must use same wallet address as when contract was created!");
-              throw new Error("Provider address mismatch");
-            }
+        if (provider_address !== contract_provider_address) {
+          console.error("provider wallet address doesn't match with contract");
+          alert("Provider must use same wallet address as when contract was created!");
+          throw new Error("Provider address mismatch");
+        }
 
-            const tx = await contract.markJobCompleted();
-            const receipt = await tx.wait();
+        const tx = await contract.markJobCompleted();
+        const receipt = await tx.wait();
 
-            console.log("Job successfully marked completed: ", + receipt);
+        console.log("Job successfully marked completed: ", + receipt);
 
-            const formData = new FormData();
-            formData.append("status", "provider_done");
-            const response = await fetch(`http://127.0.0.1:5000/jobs/${jobId}/status`,
-              { method: "PUT", body: formData }
-            );
+        const formData = new FormData();
+        formData.append("status", "provider_done");
+        const response = await fetch(`http://127.0.0.1:5000/jobs/${jobId}/status`,
+          { method: "PUT", body: formData }
+        );
 
-            if (response.ok) {
-              console.log("job successfully marked completed");
-              handleClose();
-            } else {
-              console.error("error marking job complete");
-              console.error(response);
-            }
+        if (response.ok) {
+          console.log("job successfully marked completed");
+          handleClose();
+        } else {
+          console.error("error marking job complete");
+          console.error(response);
+        }
 
-          } else {
-            console.error("ETH provider not available");
-            alert("Install Metamask or another eth wallet provider");
-            throw new Error("Metamask not found");
-          }
-        } catch (error) {
-          console.error(error);
+      } else {
+        console.error("ETH provider not available");
+        alert("Install Metamask or another eth wallet provider");
+        throw new Error("Metamask not found");
+      }
+    } catch (error) {
+      console.error(error);
     }
     console.log("Job completed:", jobData.title);
   };
@@ -224,6 +224,15 @@ const Job = ({ jobId, onRequest, requested }) => {
           <Typography id="job-modal-title" variant="h4" component="h2" gutterBottom>
             {jobData.title}
           </Typography>
+
+          <Typography variant="body2" sx={{ marginTop: 1 }}>
+            Posted by: <strong>{jobData.provider_name || 'Unknown'}</strong>
+          </Typography>
+          <Box sx={{
+            position: 'absolute',
+            bottom: 16,
+            right: 16,
+          }}></Box>
 
           <Typography variant="h6" sx={{ color: 'text.secondary', marginBottom: 1 }}>
             {jobData.tag_name}
