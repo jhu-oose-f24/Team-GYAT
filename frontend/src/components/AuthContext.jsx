@@ -33,6 +33,7 @@ export const AuthProvider = ({ children }) => {
     setUserName(decodedToken.given_name || decodedToken.name);
     setUserEmail(decodedToken.email);
     setUserId(decodedToken.sub);
+    console.log(decodedToken.sub, decodedToken.given_name || decodedToken.name, decodedToken.name, decodedToken.email);
 
     axios.post('https://task-market-7ba3283496a7.herokuapp.com/users/login', {
       user_id: decodedToken.sub,
