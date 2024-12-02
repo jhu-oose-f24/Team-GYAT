@@ -32,6 +32,20 @@ export const AuthProvider = ({ children }) => {
     setUserName(decodedToken.given_name || decodedToken.name);
     setUserEmail(decodedToken.email);
     setUserId(decodedToken.sub);
+
+    axios.post('https://your-backend-url/users/login', {
+      user_id: decodedToken.sub,
+      username: decodedToken.given_name || decodedToken.name,
+      fullname: decodedToken.name,
+      email: decodedToken.email,
+      // Include other fields if needed
+    })
+    .then(response => {
+      console.log('User data saved:', response.data);
+    })
+    .catch(error => {
+      console.error('Error saving user data:', error);
+    });
   };
 
   const signOut = () => {
