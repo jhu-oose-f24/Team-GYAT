@@ -3,6 +3,7 @@ from flask import Blueprint, request, jsonify
 from models import db
 from models.User import User
 
+
 user_bp = Blueprint('user_bp', __name__)
 
 @user_bp.route('/users/login', methods=['POST'])

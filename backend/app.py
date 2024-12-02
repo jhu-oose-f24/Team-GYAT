@@ -9,6 +9,7 @@ from sqlalchemy import inspect
 from api import register_routes
 from models import db
 from models.Tag import Tag
+from flask_migrate import Migrate
 
 GOOGLE_CLIENT_ID = '122127252195-02c10jh336ucqb3d80pma4galdafg6dg.apps.googleusercontent.com'
 def seed_tags():
@@ -42,9 +43,12 @@ def create_app():
 
     # register endpoints
     register_routes(app)
+    
     with app.app_context():
         db.create_all()  
         seed_tags()
+    
+    migrate = Migrate(app, db)
 
     return app
 
