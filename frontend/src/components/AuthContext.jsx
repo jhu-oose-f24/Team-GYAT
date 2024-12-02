@@ -32,6 +32,19 @@ export const AuthProvider = ({ children }) => {
     setUserName(decodedToken.given_name || decodedToken.name);
     setUserEmail(decodedToken.email);
     setUserId(decodedToken.sub);
+
+    axios.post('https://task-market-7ba3283496a7.herokuapp.com/users/login', {
+      user_id: decodedToken.sub,
+      username: decodedToken.given_name || decodedToken.name,
+      fullname: decodedToken.name,
+      email: decodedToken.email,
+    })
+    .then(response => {
+      console.log('User data saved:', response.data);
+    })
+    .catch(error => {
+      console.error('Error saving user data:', error);
+    });
   };
 
   const signOut = () => {
