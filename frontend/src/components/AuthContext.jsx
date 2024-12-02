@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const signIn = (token) => {
+    console.log('signIn function called');
     localStorage.setItem('googleToken', token);
     const decodedToken = JSON.parse(atob(token.split('.')[1]));
     setIsSignedIn(true);
