@@ -5,6 +5,8 @@ from models.Tag import Tag
 from utils.image_utils import save_image_from_base64
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.utils import secure_filename
+from models.User import User
+
 # import boto3
 # from botocore.exceptions import NoCredentialsError
 # from dotenv import load_dotenv
@@ -182,6 +184,7 @@ def get_job(job_id):
     if not job:
         return jsonify({'error': 'Job not found'}), 404
 
+    provider = User.query.get(job.provider_id)
     job_data = {
         'job_id': job.job_id,
         'title': job.title,
@@ -189,6 +192,7 @@ def get_job(job_id):
         'status': job.status,
         'price': job.price,
         'smart_contract_address': job.smart_contract_address,
+        "provider_fullname": provider.fullname if provider else "Unknown",
         'provider_id': job.provider_id,
         'requester_id': job.requester_id,
         'image_url': job.image,
