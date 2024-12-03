@@ -10,6 +10,7 @@ from api import register_routes
 from models import db
 from models.Tag import Tag
 from flask_migrate import Migrate
+from dotenv import load_dotenv
 
 GOOGLE_CLIENT_ID = '122127252195-02c10jh336ucqb3d80pma4galdafg6dg.apps.googleusercontent.com'
 def seed_tags():
@@ -22,7 +23,7 @@ def seed_tags():
             tag = Tag(tag_name=tag_name)
             db.session.add(tag)
     db.session.commit()
-
+load_dotenv()
 def create_app():
     app = Flask(__name__, static_folder='static')
     CORS(app)
