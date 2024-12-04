@@ -18,11 +18,25 @@ def create_conversation():
     if not participant_ids or len(participant_ids) < 2:
         return jsonify({"error": "A conversation requires at least two participants"}), 400
     try:
+        # Check if a conversation already exists with the same participants
+        existing_conversation = (
+            db.session.query(Conversation)
+            .join(ConversationParticipants)
+            .filter(ConversationParticipants.user_id.in_(participant_ids))
+            .group_by(Conversation.conversation_id)
+            .having(db.func.count(ConversationParticipants.user_id) == len(participant_ids))
+            .first()
+        )
+        if existing_conversation:
+            # Conversation already exists, return its ID
+            return jsonify({"message": "Conversation already exists", "conversation_id": existing_conversation.conversation_id}), 200
+
+        # Create a new conversation if no existing one is found
         new_conversation = Conversation(participants=[])
         db.session.add(new_conversation)
         db.session.commit()
 
-        # Add participants to the conversation
+        # Add participants to the new conversation
         for user_id in participant_ids:
             participant = ConversationParticipants(conversation_id=new_conversation.conversation_id, user_id=user_id)
             db.session.add(participant)
