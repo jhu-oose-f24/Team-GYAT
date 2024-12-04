@@ -14,11 +14,15 @@ import { ethers, BrowserProvider } from "ethers";
 import JobContractJSON from "../contract/artifact/JobContract.json";
 
 const API_URL = process.env.REACT_APP_API_URL;
+const ETH_PRICE_API = "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"; 
+
 
 const Job = ({ jobId, onRequest, requested }) => {
   const [jobData, setJobData] = React.useState({});
   const [open, setOpen] = React.useState(false);
     const { walletAddress } = useWallet();
+    const [ethPrice, setEthPrice] = React.useState(0); 
+
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -131,6 +135,16 @@ const Job = ({ jobId, onRequest, requested }) => {
     console.log("Job completed:", jobData.title);
   };
 
+  const fetchEthPrice = async () => {
+    try {
+      const response = await axios.get(ETH_PRICE_API);
+      const ethPriceData = response.data.ethereum.usd;
+      setEthPrice(ethPriceData);
+    } catch (error) {
+      console.error("Error fetching ETH price:", error);
+      setEthPrice(2518);
+    }
+  };
 
   React.useEffect(() => {
     const fetchJobData = async () => {
@@ -143,6 +157,7 @@ const Job = ({ jobId, onRequest, requested }) => {
       }
     }
     fetchJobData();
+    fetchEthPrice(); 
   }, [jobId]);
 
   const requestService = () => {
@@ -203,7 +218,7 @@ const Job = ({ jobId, onRequest, requested }) => {
                 {jobData.tag_name}
               </Typography>
               <Typography variant="body1" sx={{ fontWeight: 'bold' }}>
-                Price: ${(jobData.price * 2518).toFixed(2)}
+                Price: {jobData.price} ETH ( ${(jobData.price * ethPrice).toFixed(2)} )
               </Typography>
             </Box>
           </CardContent>
@@ -235,7 +250,7 @@ const Job = ({ jobId, onRequest, requested }) => {
           </Typography>
 
           <Typography variant="h5" sx={{ fontWeight: 'bold', marginBottom: 2 }}>
-            Price: ${(jobData.price * 2518).toFixed(2)}
+            Price: {jobData.price} ETH ( ${(jobData.price * ethPrice).toFixed(2)} )
           </Typography>
 
           <Typography id="job-modal-description" sx={{ marginBottom: 4 }}>
