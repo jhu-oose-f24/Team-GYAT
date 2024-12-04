@@ -221,7 +221,7 @@ const Job = ({ jobId, onRequest, requested }) => {
           <CardMedia
             component="img"
             height="300"
-            image={`${API_URL}/${jobData.image_url}`}
+            image={jobData.image_url?.startsWith('http') ? jobData.image_url : `${API_URL}/${jobData.image_url}`}
             alt={jobData.title || 'Job image'}
             sx={{ borderRadius: 1, marginBottom: 2 }}
           />
