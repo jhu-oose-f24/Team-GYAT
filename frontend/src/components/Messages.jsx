@@ -97,6 +97,13 @@ const Messages = () => {
     fetchMessages(conversation);
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter' && !isSubmitting) {
+      event.preventDefault();
+      handleSendMessage();
+    }
+  };
+
   const handleSendMessage = async () => {
     if (!messageText.trim()) return;
 
@@ -183,6 +190,7 @@ const Messages = () => {
                 fullWidth
                 value={messageText}
                 onChange={(e) => setMessageText(e.target.value)}
+                onKeyDown={handleKeyDown} // Trigger send on Enter
               />
               <Button
                 variant="contained"
