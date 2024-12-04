@@ -127,24 +127,37 @@ const Job = ({ jobId, onRequest, requested }) => {
       alert("You must be signed in to create a conversation.");
       return;
     }
-
+  
     if (!jobData.provider_id) {
       alert("The job provider's ID is missing.");
       return;
     }
-
+  
     try {
-      await axios.post(`${API_URL}/conversations`, {
-        participant_ids: [userId, jobData.provider_id], // Using `userId` and the provider's ID
-      });
-
-      navigate("/messages"); // Redirect to the messages page after conversation creation
+      // Check if a conversation already exists
+      const existingConversations = await axios.get(`${API_URL}/users/${userId}/conversations`);
+      const existingConversation = existingConversations.data.find(conversation =>
+        conversation.participants.some(participant => participant.user_id === jobData.provider_id)
+      );
+  
+      if (existingConversation) {
+        // Redirect to the messages page with the existing conversation ID
+        navigate(`/messages?conversationId=${existingConversation.conversation_id}`);
+      } else {
+        // Create a new conversation
+        const response = await axios.post(`${API_URL}/conversations`, {
+          participant_ids: [userId, jobData.provider_id], // Using `userId` and the provider's ID
+        });
+  
+        // Redirect to the messages page with the new conversation ID
+        navigate(`/messages?conversationId=${response.data.conversation_id}`);
+      }
     } catch (error) {
       console.error("Error creating conversation:", error.response?.data || error.message);
       alert("Failed to create conversation. Please try again.");
     }
-  };
-
+  };  
+  
   React.useEffect(() => {
     const fetchJobData = async () => {
       try {

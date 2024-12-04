@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom'; // Use for query parameters
 import { 
   Box, 
   List, 
@@ -10,13 +11,15 @@ import {
   Divider, 
   CircularProgress 
 } from '@mui/material';
-import { useAuth } from './AuthContext'; // Import the AuthContext
+import { useAuth } from './AuthContext';
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
 const Messages = () => {
-  const { userId, isSignedIn } = useAuth(); // Retrieve userId and isSignedIn from AuthContext
+  const { userId, isSignedIn } = useAuth();
+  const [searchParams] = useSearchParams(); // Access query parameters
+  const conversationId = searchParams.get("conversationId"); // Get conversationId from URL
   const [conversations, setConversations] = useState([]);
   const [selectedConversation, setSelectedConversation] = useState(null);
   const [messages, setMessages] = useState([]);
@@ -25,7 +28,7 @@ const Messages = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!userId || !isSignedIn) return; // Ensure the user is signed in
+    if (!userId || !isSignedIn) return;
 
     const fetchUserAndConversations = async () => {
       try {
@@ -42,7 +45,7 @@ const Messages = () => {
           );
           const displayName = otherParticipants
             .map((p) => p.fullname || `User ${p.user_id}`)
-            .join(', '); // Create a display name
+            .join(', ');
           return {
             ...conversation,
             displayName,
@@ -50,6 +53,17 @@ const Messages = () => {
         });
 
         setConversations(conversationsWithNames);
+
+        // Automatically select a conversation if conversationId is provided in the URL
+        if (conversationId) {
+          const targetConversation = conversationsWithNames.find(
+            (c) => c.conversation_id === parseInt(conversationId, 10)
+          );
+          if (targetConversation) {
+            setSelectedConversation(targetConversation);
+            fetchMessages(targetConversation);
+          }
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -58,18 +72,17 @@ const Messages = () => {
     };
 
     fetchUserAndConversations();
-  }, [userId, isSignedIn]);
+  }, [userId, isSignedIn, conversationId]);
 
-  const fetchMessages = async (conversationId) => {
+  const fetchMessages = async (conversation) => {
     try {
       setIsLoading(true);
-      const response = await axios.get(`${API_URL}/conversations/${conversationId}/messages`);
+      const response = await axios.get(`${API_URL}/conversations/${conversation.conversation_id}/messages`);
       const messagesWithNames = response.data.map((message) => ({
         ...message,
         sender_name:
-          conversations
-            .find((c) => c.conversation_id === conversationId)
-            ?.participants.find((p) => p.user_id === message.sender_id)?.fullname || `User ${message.sender_id}`,
+          conversation.participants.find((p) => p.user_id === message.sender_id)?.fullname ||
+          `User ${message.sender_id}`,
       }));
       setMessages(messagesWithNames);
     } catch (error) {
@@ -81,7 +94,7 @@ const Messages = () => {
 
   const handleConversationClick = (conversation) => {
     setSelectedConversation(conversation);
-    fetchMessages(conversation.conversation_id);
+    fetchMessages(conversation);
   };
 
   const handleSendMessage = async () => {
@@ -95,7 +108,7 @@ const Messages = () => {
         conversation_id: selectedConversation.conversation_id,
       });
       setMessageText('');
-      fetchMessages(selectedConversation.conversation_id); // Refresh messages
+      fetchMessages(selectedConversation);
     } catch (error) {
       console.error('Error sending message:', error);
     } finally {
@@ -131,7 +144,7 @@ const Messages = () => {
               >
                 <ListItemText primary={conversation.displayName || 'Unnamed Conversation'} />
               </ListItem>
-              {index < conversations.length - 1 && <Divider />} {/* Add Divider */}
+              {index < conversations.length - 1 && <Divider />}
             </React.Fragment>
           ))}
         </List>
