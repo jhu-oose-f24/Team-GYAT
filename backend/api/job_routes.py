@@ -5,6 +5,7 @@ from models.Tag import Tag
 from utils.image_utils import save_image_from_base64
 from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.utils import secure_filename
+from collections import Counter
 # import boto3
 # from botocore.exceptions import NoCredentialsError
 # from dotenv import load_dotenv
@@ -233,3 +234,17 @@ def get_tags():
     tags = Tag.query.all()
     result = [{'tag_id': tag.tag_id, 'tag_name': tag.tag_name} for tag in tags]
     return jsonify(result)
+
+@job_bp.route('/requested_jobs/<int:user_id>', methods=['GET'])
+def get_requested_job(user_id):
+    # Get all jobs where requester ID is == userID. Aggregate most common
+    # tag_name and use this to recommend tags/job
+    jobs = Job.query.filter_by(requester_id=user_id).all()
+    # Create a list of tags from all of the requested jobs
+    tag_freqs = Counter([job.tag_name for job in jobs]) 
+    print(jobs)
+    print(tag_freqs)
+    if tag_freqs:
+        return tag_freqs.most_common(1)[0][0]
+    else:
+        return None
