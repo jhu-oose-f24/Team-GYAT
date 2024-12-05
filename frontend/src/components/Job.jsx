@@ -13,12 +13,13 @@ import { useWallet } from "./WalletContext";
 import { useAuth } from './AuthContext';
 import { ethers, BrowserProvider } from "ethers";
 import JobContractJSON from "../contract/artifact/JobContract.json";
+import JobActionBtn from "./JobActionBtn"
 
 const API_URL = process.env.REACT_APP_API_URL;
 const ETH_PRICE_API = 'https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd'; 
 
 
-const Job = ({ jobId, onRequest, requested }) => {
+const Job = ({ jobId, onRequest, requested, refresh }) => {
   const [jobData, setJobData] = React.useState({});
   const [open, setOpen] = React.useState(false);
   const { walletAddress } = useWallet();
@@ -29,103 +30,6 @@ const Job = ({ jobId, onRequest, requested }) => {
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
-  const handleRequestService = async () => {
-    try {
-      const JobContractABI = JobContractJSON.abi;
-
-      if (!walletAddress) {
-        alert("Please connect ETH wallet to request job.");
-        throw new Error("Wallet not connected.");
-      }
-
-      const requester = new BrowserProvider(window.ethereum);
-      const signer = await requester.getSigner();
-
-      const contract = new ethers.Contract(
-        jobData.smart_contract_address,
-        JobContractABI,
-        signer
-      );
-
-      const provider_address = await contract.provider();
-      const job_price = await contract.price();
-
-      if (provider_address === walletAddress) {
-        alert("Provider and Requester wallet addresses must be different!");
-        throw new Error("Same Provider/Requester address");
-      }
-
-      const tx = await contract.acceptJob({
-        value: job_price
-      });
-
-      await tx.wait();
-
-      const formData = new FormData();
-      formData.append("status", "accepted");
-      const response = await fetch(`${API_URL}/jobs/${jobId}/status`, {
-        method: "PUT",
-        body: formData
-      });
-
-      if (response.ok) {
-        console.log("Job accepted successfully");
-        requestService();
-      } else {
-        console.error("Error accepting job", response);
-      }
-    } catch (error) {
-      console.error("Error requesting service:", error);
-    }
-  };
-
-  const handleCompleteJob = async () => {
-    try {
-      const JobContractABI = JobContractJSON.abi;
-
-      if (!walletAddress) {
-        alert("Please connect ETH wallet to complete job.");
-        throw new Error("Wallet not found");
-      }
-
-      const provider = new BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-
-      const contract = new ethers.Contract(
-        jobData.smart_contract_address,
-        JobContractABI,
-        signer
-      );
-
-      const contract_provider_address = await contract.provider();
-
-      if (walletAddress !== contract_provider_address) {
-        alert("Provider must use the same wallet address as when contract was created!");
-        throw new Error("Provider address mismatch");
-      }
-
-      const tx = await contract.markJobCompleted();
-      await tx.wait();
-
-      const formData = new FormData();
-      formData.append("status", "provider_done");
-      const response = await fetch(`${API_URL}/jobs/${jobId}/status`, {
-        method: "PUT",
-        body: formData
-      });
-
-      if (response.ok) {
-        console.log("Job successfully marked completed");
-        handleClose();
-      } else {
-        console.error("Error marking job complete", response);
-      }
-    } catch (error) {
-      console.error("Error completing job:", error);
-    }
-  };
-
 
   const fetchEthPrice = async () => {
     try {
@@ -210,6 +114,7 @@ const Job = ({ jobId, onRequest, requested }) => {
     overflow: 'auto'
   };
 
+
   return (
     <>
       <Card sx={{ position: 'relative', width: '100%', height: 325 }}>
@@ -285,19 +190,12 @@ const Job = ({ jobId, onRequest, requested }) => {
             {jobData.description}
           </Typography>
 
-          <Button
-            variant="contained"
-            fullWidth
-            onClick={handleRequestService}
-            sx={{
-              backgroundColor: 'green',
-              '&:hover': {
-                backgroundColor: '#006400',
-              }
-            }}
-          >
-            Request This Service
-          </Button>
+        <JobActionBtn jobData={jobData} 
+                      userId={userId} 
+                      walletAddress={walletAddress}
+                      handleClose={handleClose} 
+                      requestService={requestService}
+                      refresh={refresh} />
           <Button
             variant="contained"
             color="primary"

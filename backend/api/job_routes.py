@@ -213,6 +213,9 @@ def get_job(job_id):
 def update_job_status(job_id):
     data = request.form
     new_status = data['status']
+    requester_id = None
+    if new_status == "accepted":
+        requester_id = data['requester_id']
 
     if not is_valid_status(new_status):
         return jsonify({'error': 'Invalid job status'}), 400
@@ -222,6 +225,8 @@ def update_job_status(job_id):
         return jsonify({'error': 'Job not found'}), 404
 
     job.update_job_status(new_status)
+    if requester_id:
+        job.set_requester_id(requester_id)
     db.session.commit()
 
     return jsonify({'message': 'Job status updated successfully'})

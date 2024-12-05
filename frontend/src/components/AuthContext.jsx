@@ -2,6 +2,8 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 const AuthContext = createContext(null);
 
+const API_URL= process.env.REACT_APP_API_URL;
+
 export const AuthProvider = ({ children }) => {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [userName, setUserName] = useState('');
@@ -26,7 +28,6 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const signIn = (token) => {
-    console.log('signIn function called');
     localStorage.setItem('googleToken', token);
     const decodedToken = JSON.parse(atob(token.split('.')[1]));
     setIsSignedIn(true);
@@ -35,7 +36,7 @@ export const AuthProvider = ({ children }) => {
     setUserId(decodedToken.sub);
     console.log(decodedToken.sub, decodedToken.given_name || decodedToken.name, decodedToken.name, decodedToken.email);
 
-    axios.post('https://task-market-7ba3283496a7.herokuapp.com/users/login', {
+    axios.post(`${API_URL}/users/login`, {
       user_id: decodedToken.sub,
       username: decodedToken.given_name || decodedToken.name,
       fullname: decodedToken.name,

@@ -45,7 +45,7 @@ const JobFeed = () => {
       try {
         const response = await axios.get(`${API_URL}/jobs`);
         // Filter so you get all jobs where job.user_id != userId
-        const filteredJobs = response.data.filter((job) => job.provider_id != userId);
+        const filteredJobs = response.data.filter((job) => job.provider_id != userId && job.status === "open");
         setJobs(filteredJobs);
         console.log(response.data);
       } catch (err) {
@@ -56,6 +56,7 @@ const JobFeed = () => {
   }, [userId, navigate]);
 
   const handleRequestJob = (job) => {
+      console.log("handling request job");
     setRequestedJobs([...requestedJobs, job]);
     setJobs(jobs.filter(j => j.job_id !== job.job_id));
   }
@@ -138,18 +139,6 @@ const JobFeed = () => {
           <SearchBar jobs={filteredJobs} onSearch={handleSearch} />
         </Box>
       </Box>
-
-      <Divider style={{ margin: '20px 0' }} />
-
-      {/* Requested jobs section */}
-      <Typography variant="h6" sx={{ marginLeft: 10, marginTop: 7, fontWeight: 'bold', fontFamily: 'Roboto' }}>Current Requested Jobs:</Typography>
-      <Grid container spacing={{ xs: 2, md: 5 }} columns={{ xs: 4, sm: 8, md: 12 }} sx={{ marginTop: 5, paddingX: 10 }}>
-        {requestedJobs.map((item) => (
-          <Grid key={item.job_id} size={{ xs: 2, sm: 4, md: 4 }}>
-            <Job jobId={item.job_id} requested={true} onRequest={() => { }} />
-          </Grid>
-        ))}
-      </Grid>
 
       <Divider sx={{ marginTop: 9 }} />
       <Grid

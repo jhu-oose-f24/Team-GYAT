@@ -39,3 +39,6 @@ class Job(db.Model):
 
     def update_job_status(self, status: str) -> None:
         self.status = status
+
+    def set_requester_id(self, requester_id):
+        self.requester_id = requester_id
