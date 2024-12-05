@@ -138,7 +138,5 @@ to the main page.
 The frontend of the app is deployed at https://scintillating-llama-2cea82.netlify.app and the backend of the app is deployed at https://task-market-7ba3283496a7.herokuapp.com/
 
 ## Known bugs
-User login/register is still in the process of being implemented. We have spent a total of 15 hours on it this iteration, with Andrew mostly putting in the work trying to implement it. He has contacted IT to get it working with the JHU SSO option, and is still running into bugs since the provided code on the course website is not easily transferable to Flask. Once we get this working, we will be able to implement the rest of our features easily in our next iteration.
-The smart search feature started in iteration four is also not completed fully as of right now as it relies on having a userID to keep track of interactions/requests a user makes. Once the login problems are sorted, this will not be blocked.
-
-- Fething live ETH price.
+- Fetching live ETH price.
+- The Smart Search feature is done but we are currently having a bug on the web3 side when trying to request jobs in order to test the new feature. Fixing the error when requesting jobs is our top priority.
