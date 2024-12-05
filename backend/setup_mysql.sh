@@ -39,7 +39,7 @@ fi
 echo "Starting MySQL container..."
 docker-compose up -d
 
-sleep 20
+sleep 5
 
 # Create SQL commands for Users and Jobs tables
 SQL_COMMANDS="

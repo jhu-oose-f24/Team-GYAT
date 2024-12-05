@@ -3,6 +3,7 @@ import { TextField, Button, Box, Typography, MenuItem } from '@mui/material';
 import NavBar from './NavBar';
 
 import { useEffect } from 'react';
+import { useNavigate } from "react-router-dom";
 
 import JobContractJSON from '../contract/artifact/JobContract.json';
 import { ethers, ContractFactory, BrowserProvider } from "ethers";
@@ -21,13 +22,16 @@ function CreateJob() {
     const [tags, setTags] = useState([]);
     const { walletAddress } = useWallet();
     
-    const { userId } = useAuth();
+    const { isSignedIn, userId } = useAuth();
+    const navigate = useNavigate();
 
     useEffect(() => {
+        if (!isSignedIn) {
+            navigate("/");
+        }
         // Fetch available tags when component mounts
         const fetchTags = async () => {
             try {
-                console.log(API_URL);
                 const response = await fetch(`${API_URL}/tags`);
                 const data = await response.json();
                 setTags(data);
@@ -37,7 +41,7 @@ function CreateJob() {
         };
 
         fetchTags();
-    }, []);
+    }, [isSignedIn, navigate]);
 
     const JobContractABI = JobContractJSON.abi;
     const JobContractBytecode = JobContractJSON.data.bytecode?.object;
@@ -56,18 +60,13 @@ function CreateJob() {
         formData.append('tag_name', jobTag);
 
 
-        console.log(userId);
-        console.log(jobTag);
-
-        // limit max price to 0.01 ETH for now
+        // limit max price to 100 ETH for now
         const priceValue = parseFloat(jobPrice);
         if (isNaN(priceValue) || priceValue <= 0 || priceValue > 100) {
             alert("Price must be positive and less than or equal to 100 ETH");
             setIsSubmitting(false);
             return;
         }
-
-        console.log(priceValue);
 
         // If the user has selected a file, append it to the FormData object
         if (jobPhoto) {
@@ -81,7 +80,6 @@ function CreateJob() {
                 throw new Error("Wallet not connected.");
             }
 
-            console.log("using wallet address: ", walletAddress);
             const provider = new BrowserProvider(window.ethereum);
             const signer = await provider.getSigner();
             const factory = new ContractFactory(JobContractABI, JobContractBytecode, signer);

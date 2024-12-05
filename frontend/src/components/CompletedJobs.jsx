@@ -1,4 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import Job from "./Job"
+import axios from "axios"
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import { Select, 
@@ -10,15 +12,41 @@ import { Select,
          Grid,
          Box } from '@mui/material';
 
+const API_URL = process.env.REACT_APP_API_URL;
+
 const CompletedJobs = () => {
-    const { isSignedIn } = useAuth();
+    const { isSignedIn, userId  } = useAuth();
     const navigate = useNavigate();
+
+    const [providedJobs, setProvidedJobs] = useState([]);
+    const [requestedJobs, setRequestedJobs] = useState([]);
+
+    const fetchCompletedJobs = async () => {
+        try {
+            const response = await axios.get(`${API_URL}/jobs`);
+            const jobs = response.data;
+
+            const provided = jobs.filter(
+                (job) => job.provider_id === userId && job.status ===  'finished'
+            );
+
+            const requested = jobs.filter(
+                (job) => job.requester_id === userId && job.status === 'finished'
+            );
+
+            setProvidedJobs(provided);
+            setRequestedJobs(requested);
+        } catch (err) {
+            console.error("Error fetching completed jobs", err);
+        }
+    };
 
     useEffect(() => {
         if (!isSignedIn) {
             navigate('/');
         }
-    }, [isSignedIn, navigate]);
+        fetchCompletedJobs();
+    }, [isSignedIn, navigate, userId]);
 
     return (
         <Box sx = {{ paddingBottom : 5 }}>
@@ -30,11 +58,11 @@ const CompletedJobs = () => {
       <Grid container spacing={{ xs: 2, md: 5 }} 
                       columns={{ xs: 4, sm: 8, md: 12 }} 
                       sx={{ marginTop: 5, paddingX: 10 }}>
-        {/* TODO job rendering logic  requestedJobs.map((item) => (
-          <Grid key = {item.job_id} size={{ xs: 2, sm: 4, md: 4 }}>
-            <Job jobId={item.job_id} requested={true} onRequest={() => {}}/>
-          </Grid>
-        ))*/ }
+        {providedJobs.map((job) => (
+            <Grid item xs={12} sm={6} md={4} key={job.job_id}>
+                <Job jobId={job.job_id} />
+            </Grid>
+        )) }
       </Grid>
       
       <Divider sx = {{ marginTop: 9 }} />
@@ -45,11 +73,11 @@ const CompletedJobs = () => {
       <Grid container spacing={{ xs: 2, md: 5 }} 
                       columns={{ xs: 4, sm: 8, md: 12 }} 
                       sx={{ marginTop: 5, paddingX: 10 }}>
-        {/* TODO job rendering logic  requestedJobs.map((item) => (
-          <Grid key = {item.job_id} size={{ xs: 2, sm: 4, md: 4 }}>
-            <Job jobId={item.job_id} requested={true} onRequest={() => {}}/>
-          </Grid>
-        ))*/ }
+        {requestedJobs.map((job) => (
+            <Grid item xs={12} sm={6} md={4} key={job.job_id}>
+                <Job jobId={job.job_id} />
+            </Grid>
+        )) }
       </Grid>
     </Box>
     );
