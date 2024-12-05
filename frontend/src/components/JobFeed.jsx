@@ -38,9 +38,9 @@ const JobFeed = () => {
     { value: 'highToLow', label: 'Price (Ascending)' }
   ];
   React.useEffect(() => {
-      if (!isSignedIn) {
-          navigate('/');
-      }
+    if (!isSignedIn) {
+      navigate('/');
+    }
     const fetchJobs = async () => {
       try {
         const response = await axios.get(`${API_URL}/jobs`);
@@ -56,8 +56,8 @@ const JobFeed = () => {
   }, [userId, navigate]);
 
   const handleRequestJob = (job) => {
-    setRequestedJobs([...requestedJobs, job]); 
-    setJobs(jobs.filter(j => j.job_id !== job.job_id)); 
+    setRequestedJobs([...requestedJobs, job]);
+    setJobs(jobs.filter(j => j.job_id !== job.job_id));
   }
 
   /*
@@ -66,9 +66,9 @@ const JobFeed = () => {
   const handleChange = (e) => {
     setFilter(e.target.value);
   }
-  
+
   const handleSearch = (e) => {
-    setSearchQuery(e); 
+    setSearchQuery(e);
   }
 
   const handleTagChange = (e) => {
@@ -101,57 +101,64 @@ const JobFeed = () => {
   }, [filter, tagFilter, jobs, searchQuery]);
 
   return (
-    <Box sx = {{ paddingBottom: 5 }}>
-      <SearchBar jobs={filteredJobs} onSearch={handleSearch} />
+    <Box sx={{ paddingBottom: 5 }}>
+
       <Typography variant="h4" sx={{ marginLeft: 10, marginTop: 7, fontWeight: 'bold', fontFamily: 'Roboto' }}>Services Offered:</Typography>
 
-      <FormControl sx={{ m: 1, minWidth: 120, marginLeft: 10, marginTop: 7, marginBottom: 5, width: 150 }} size="medium">
-        <InputLabel>Price</InputLabel>
-        <Select value={filter} label="Filter" onChange={handleChange} >
-          <MenuItem sx = {{ color: "gray" }} value="">
-            None
-          </MenuItem>
-          {filterList.map((item) => (
-            <MenuItem key={item.value} value={item.value}>
-              {item.label}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, marginLeft: 10, marginBottom: 5 }}>
+        <FormControl sx={{ m: 1, minWidth: 120, marginLeft: 2, marginTop: 7, marginBottom: 5, width: 150 }} size="medium">
+          <InputLabel>Price</InputLabel>
+          <Select value={filter} label="Filter" onChange={handleChange} >
+            <MenuItem sx={{ color: "gray" }} value="">
+              None
             </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+            {filterList.map((item) => (
+              <MenuItem key={item.value} value={item.value}>
+                {item.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
 
-      <FormControl sx={{ m: 1, minWidth: 120, marginTop: 7, marginBottom: 5, width: 150 }} size="medium">
-        <InputLabel>Job Types</InputLabel>
-        <Select value={tagFilter} label="Job Tags" onChange={handleTagChange}>
-          <MenuItem sx = {{ color: "gray" }} value="">
-            None
-          </MenuItem>
-          {tagList.map((item) => (
-            <MenuItem key={item.value} value={item.value}>
-              {item.label}
+        <FormControl sx={{ m: 1, minWidth: 120, marginTop: 7, marginBottom: 5, width: 150 }} size="medium">
+          <InputLabel>Job Types</InputLabel>
+          <Select value={tagFilter} label="Job Tags" onChange={handleTagChange}>
+            <MenuItem sx={{ color: "gray" }} value="">
+              None
             </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+            {tagList.map((item) => (
+              <MenuItem key={item.value} value={item.value}>
+                {item.label}
+              </MenuItem>
+            ))}
+          </Select>
+
+        </FormControl>
+        <Box sx={{ marginTop: 2 }}>
+          <SearchBar jobs={filteredJobs} onSearch={handleSearch} />
+        </Box>
+      </Box>
+
       <Divider style={{ margin: '20px 0' }} />
-      
+
       {/* Requested jobs section */}
       <Typography variant="h6" sx={{ marginLeft: 10, marginTop: 7, fontWeight: 'bold', fontFamily: 'Roboto' }}>Current Requested Jobs:</Typography>
       <Grid container spacing={{ xs: 2, md: 5 }} columns={{ xs: 4, sm: 8, md: 12 }} sx={{ marginTop: 5, paddingX: 10 }}>
         {requestedJobs.map((item) => (
-          <Grid key = {item.job_id} size={{ xs: 2, sm: 4, md: 4 }}>
-            <Job jobId={item.job_id} requested={true} onRequest={() => {}}/>
+          <Grid key={item.job_id} size={{ xs: 2, sm: 4, md: 4 }}>
+            <Job jobId={item.job_id} requested={true} onRequest={() => { }} />
           </Grid>
         ))}
       </Grid>
-      
-      <Divider sx = {{ marginTop: 9 }} />
+
+      <Divider sx={{ marginTop: 9 }} />
       <Grid
         container spacing={{ xs: 2, md: 5 }} columns={{ xs: 4, sm: 8, md: 12 }}
         sx={{ marginTop: 10, paddingX: 10 }} // Margin top and horizontal padding
       >
         {filteredJobs.map((item, index) => (
-          <Grid key = {item.job_id} size={{ xs: 2, sm: 4, md: 4 }}>
-            <Job jobId={item.job_id} onRequest={handleRequestJob} requested={false}/>
+          <Grid key={item.job_id} size={{ xs: 2, sm: 4, md: 4 }}>
+            <Job jobId={item.job_id} onRequest={handleRequestJob} requested={false} />
           </Grid>
         ))}
       </Grid>
