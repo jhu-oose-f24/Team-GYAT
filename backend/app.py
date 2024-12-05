@@ -25,7 +25,6 @@ def seed_tags():
             tag = Tag(tag_name=tag_name)
             db.session.add(tag)
     db.session.commit()
-
 def create_app():
     app = Flask(__name__, static_folder='static')
     CORS(app)
