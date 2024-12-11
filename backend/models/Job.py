@@ -12,8 +12,7 @@ class Job(db.Model):
     image = db.Column(db.String(255), nullable=True, default='images/default_image.jpg')
     tag_name = db.Column(db.String(100), nullable=False)
 
-
-    # foreign keys to reference users
+    # Foreign keys to reference users
     requester_id = db.Column(db.Integer, db.ForeignKey('Users.user_id'))
     provider_id = db.Column(db.Integer, db.ForeignKey('Users.user_id'))
 

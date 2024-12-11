@@ -33,7 +33,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('JAWSDB_URL') or os.getenv('DATABASE_URL')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-    # associate db with app
+    # Associate db with app
     db.init_app(app)
 
     migrate = Migrate(app, db)

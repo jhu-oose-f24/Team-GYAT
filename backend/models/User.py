@@ -10,7 +10,7 @@ class User(db.Model):
     email = db.Column(db.String(100), nullable=False)
     password = db.Column(db.String(255), nullable=True)
 
-    # declare relationships to jobs requested and provided
+    # Declare relationships to jobs requested and provided
     jobs_requested = db.relationship('Job', foreign_keys='Job.requester_id', backref='requester', lazy=True)
     jobs_provided = db.relationship('Job', foreign_keys='Job.provider_id', backref='provider', lazy=True)
 

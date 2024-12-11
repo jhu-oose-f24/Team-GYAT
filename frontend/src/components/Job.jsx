@@ -25,8 +25,8 @@ const Job = ({ jobId, onRequest, requested, refresh }) => {
   const { walletAddress } = useWallet();
   const [ethPrice, setEthPrice] = React.useState(0); 
 
-  const { userId } = useAuth(); // Get the current user's ID from AuthContext
-  const navigate = useNavigate(); // Hook for navigation
+  const { userId } = useAuth(); 
+  const navigate = useNavigate(); 
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);

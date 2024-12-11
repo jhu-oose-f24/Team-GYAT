@@ -12,14 +12,17 @@ from botocore.exceptions import NoCredentialsError
 from dotenv import load_dotenv
 import os
 
+# Load environment variables for AWS S3 credentials and configurations
 load_dotenv()
 
+# AWS S3 configuration for file storage
 S3_KEY = os.getenv("AWS_ACCESS_KEY_ID")
 S3_SECRET = os.getenv("AWS_SECRET_ACCESS_KEY")
 S3_BUCKET = os.getenv("S3_BUCKET_NAME")
-S3_REGION = "us-east-2"  # e.g., "us-east-1"
+S3_REGION = "us-east-2" 
 S3_BASE_URL = f"https://{S3_BUCKET}.s3.{S3_REGION}.amazonaws.com/"
 
+# Initialize S3 client with credentials
 s3_client = boto3.client(
     's3',
     aws_access_key_id=S3_KEY,
@@ -27,16 +30,14 @@ s3_client = boto3.client(
     region_name=S3_REGION
 )
 
-
+# Allowed file extensions for image uploads
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
-# UPLOAD_FOLDER = 'static/images/'
 
-# if not os.path.exists(UPLOAD_FOLDER):
-#     os.makedirs(UPLOAD_FOLDER)
-
+# Utility function to check if a file has a valid extension
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+# Utility function to get the MIME type of a file based on its extension
 def get_content_type(filename):
     extension = filename.rsplit('.', 1)[1].lower() 
     if extension in ALLOWED_EXTENSIONS:
@@ -44,59 +45,17 @@ def get_content_type(filename):
         return content_type
     return "application/octet-stream"  # Default fallback if extension is not allowed
 
+# Blueprint for job-related routes
 job_bp = Blueprint('job_bp', __name__)
 
-# @job_bp.route('/jobs', methods=['POST'])
-# def create_job():
-#     data = request.form
-#     file = request.files.get('image', None)
-
-#     try:
-#         provider_id = int(data['provider_id'])
-#         title = data['title']
-#         description = data['description']
-#         status = data['status']
-#         price = float(data['price'])
-#         smart_contract_address = data.get('smart_contract_address', None)
-        
-#         tag_name = data.get('tag_name', None)
-
-#         # Handle the file upload
-#         image_path = None
-#         if file and allowed_file(file.filename):
-#             filename = secure_filename(file.filename)
-#             image_path = os.path.join(UPLOAD_FOLDER, filename)
-#             file.save(image_path)
-#         else:
-#             image_path = 'static/images/default_image.jpg'
-
-#         new_job = Job(
-#             provider_id=provider_id,
-#             title=title,
-#             description=description,
-#             status=status,
-#             price=price,
-#             tag_name=tag_name,
-#             smart_contract_address=smart_contract_address,
-#             image=image_path
-#         )
-#         db.session.add(new_job)
-#         db.session.commit()
-#         return jsonify({"message": "Job created successfully", "job_id": new_job.job_id}), 201
-#     except SQLAlchemyError as e:
-#         print(e)
-#         db.session.rollback()
-#         return jsonify({"error": str(e)}), 400
-#     except Exception as e:
-#         print(e)
-#         return jsonify({"error": str(e)}), 400
-
+# Route to create a new job
 @job_bp.route('/jobs', methods=['POST'])
 def create_job():
     data = request.form
     file = request.files.get('image', None)
 
     try:
+        # Extract job details from the request
         provider_id = int(data['provider_id'])
         title = data['title']
         description = data['description']
@@ -105,7 +64,7 @@ def create_job():
         smart_contract_address = data.get('smart_contract_address', None)
         tag_name = data.get('tag_name', None)
 
-        # Handle file upload
+        # Handle file upload (if provided)
         image_url = None
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
@@ -121,9 +80,9 @@ def create_job():
             except NoCredentialsError as e:
                 return jsonify({"error": "AWS credentials not valid"}), 400
         else:
-            image_url = f"{S3_BASE_URL}default_image.jpg"  # Default image URL in S3
+            image_url = f"{S3_BASE_URL}default_image.jpg"  
 
-        # Create new job
+        # Create a new job record
         new_job = Job(
             provider_id=provider_id,
             title=title,
@@ -145,11 +104,12 @@ def create_job():
         print(e)
         return jsonify({"error": str(e)}), 400
 
+# Utility function to validate job status
 def is_valid_status(status):
     valid_statuses = ['open', 'accepted', 'provider_done', 'finished']
     return status in valid_statuses
 
-# get all jobs
+# Route to get all jobs
 @job_bp.route('/jobs', methods=['GET'])
 def get_jobs():
     jobs = Job.query.all()
@@ -167,7 +127,7 @@ def get_jobs():
     } for job in jobs]
     return jsonify(result)
     
-# get all open jobs    
+# Route to get all open jobs
 @job_bp.route('/jobs/open', methods=['GET'])
 def get_open_jobs():
     jobs = Job.query.filter_by(status='open').all()
@@ -185,7 +145,7 @@ def get_open_jobs():
     } for job in jobs]
     return jsonify(result)
 
-# get single job by job id
+# Route to get a single job by its ID
 @job_bp.route('/jobs/<int:job_id>', methods=['GET'])
 def get_job(job_id):
     job = Job.query.get(job_id)
@@ -208,7 +168,7 @@ def get_job(job_id):
     }
     return jsonify(job_data)
 
-# update job status
+# Route to update the status of a job
 @job_bp.route('/jobs/<int:job_id>/status', methods=['PUT'])
 def update_job_status(job_id):
     data = request.form
@@ -231,7 +191,7 @@ def update_job_status(job_id):
 
     return jsonify({'message': 'Job status updated successfully'})
 
-# delete job by job id
+# Route to delete a job by its ID
 @job_bp.route('/jobs/<int:job_id>', methods=['DELETE'])
 def delete_job(job_id):
     job = Job.query.get(job_id)
@@ -245,6 +205,7 @@ def delete_job(job_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
+# Route to get all tags
 @job_bp.route('/tags', methods=['GET'])
 def get_tags():
     tags = Tag.query.all()

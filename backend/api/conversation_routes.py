@@ -3,18 +3,21 @@ from models import db
 from models.Conversation import Conversation, ConversationParticipants, Message
 from datetime import datetime, timezone
 
+# Define a Blueprint for conversation-related routes
 conversation_bp = Blueprint('conversation_bp', __name__)
 
-
+# Test route to verify if the blueprint is functioning correctly
 @conversation_bp.route('/test', methods=['GET'])
 def test_route():
     return jsonify({"message": "Test route works!"})
 
-# Create a new conversation
+# Route to create a new conversation
 @conversation_bp.route('/conversations', methods=['POST'])
 def create_conversation():
     data = request.get_json()
     participant_ids = data.get('participant_ids')
+
+    # Validate input: a conversation requires at least two participants
     if not participant_ids or len(participant_ids) < 2:
         return jsonify({"error": "A conversation requires at least two participants"}), 400
     try:
@@ -46,6 +49,7 @@ def create_conversation():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
     
+# Route to get all conversations for a specific user
 @conversation_bp.route('/users/<int:user_id>/conversations', methods=['GET'])
 def get_conversations_for_user(user_id):
     conversations = (
@@ -68,7 +72,7 @@ def get_conversations_for_user(user_id):
     ]
     return jsonify(result)
 
-# Get all messages in a conversation
+# Route to get all messages in a specific conversation
 @conversation_bp.route('/conversations/<int:conversation_id>/messages', methods=['GET'])
 def get_messages_in_conversation(conversation_id):
     messages = Message.query.filter_by(conversation_id=conversation_id).order_by(Message.created_at).all()
@@ -80,7 +84,7 @@ def get_messages_in_conversation(conversation_id):
     } for message in messages]
     return jsonify(result)
 
-# Add a participant to an existing conversation
+# Route to add a participant to an existing conversation
 @conversation_bp.route('/conversations/<int:conversation_id>/participants', methods=['POST'])
 def add_participant(conversation_id):
     data = request.get_json()
@@ -100,7 +104,7 @@ def add_participant(conversation_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-# Remove a participant from a conversation
+# Route to remove a participant from a conversation
 @conversation_bp.route('/conversations/<int:conversation_id>/participants/<int:user_id>', methods=['DELETE'])
 def remove_participant(conversation_id, user_id):
     conversation = Conversation.query.get(conversation_id)
@@ -116,7 +120,7 @@ def remove_participant(conversation_id, user_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-# Get participants of a conversation
+# Route to get all participants in a specific conversation
 @conversation_bp.route('/conversations/<int:conversation_id>/participants', methods=['GET'])
 def get_participants(conversation_id):
     participants = (
