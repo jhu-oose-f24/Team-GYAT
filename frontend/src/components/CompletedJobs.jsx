@@ -14,6 +14,9 @@ import { Select,
 
 const API_URL = process.env.REACT_APP_API_URL;
 
+/**
+ * CompletedJobs: A component to display jobs completed by the user, either as a provider or requester.
+ */
 const CompletedJobs = () => {
     const { isSignedIn, userId  } = useAuth();
     const navigate = useNavigate();
@@ -21,6 +24,10 @@ const CompletedJobs = () => {
     const [providedJobs, setProvidedJobs] = useState([]);
     const [requestedJobs, setRequestedJobs] = useState([]);
 
+     /**
+     * fetchCompletedJobs: Fetches completed jobs from the backend and filters them 
+     * into provided and requested jobs based on the user's ID.
+     */
     const fetchCompletedJobs = async () => {
         try {
             const response = await axios.get(`${API_URL}/jobs`);
@@ -41,8 +48,10 @@ const CompletedJobs = () => {
         }
     };
 
+     // Effect to fetch jobs when the component mounts or dependencies change
     useEffect(() => {
         if (!isSignedIn) {
+            // Redirect to home page if user is not signed in
             navigate('/');
         }
         fetchCompletedJobs();

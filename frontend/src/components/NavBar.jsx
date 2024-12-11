@@ -11,11 +11,18 @@ import GoogleAuthButtons from "./GoogleAuthButtons.jsx";
 import { useAuth } from './AuthContext';
 import { useWallet } from "./WalletContext";
 
+/**
+ * NavBar Component: Displays a navigation bar with links, actions, and authentication options.
+ */
 export default function NavBar() {
   const navigate = useNavigate();
   const { isSignedIn, userName, userEmail, userId } = useAuth();
   const { walletAddress, setWalletAddress } = useWallet();
 
+   /**
+   * Requests the user's Ethereum account through MetaMask.
+   * Sets the wallet address if the connection is successful.
+   */
   async function requestAccount() {
     if (window.ethereum) {
       try {
@@ -31,6 +38,10 @@ export default function NavBar() {
     }
   }
 
+  /**
+   * Handles wallet connection using MetaMask.
+   * Also initializes the ethers.js provider.
+   */
   async function handleConnect() {
     if (window.ethereum) {
       await requestAccount();
@@ -39,26 +50,44 @@ export default function NavBar() {
     }
   }
 
+  /**
+   * Disconnects the user's wallet by clearing the wallet address state.
+   */
   function disconnectWallet() {
       setWalletAddress("");
   }
 
+  /**
+   * Navigates to the "Completed Jobs" page.
+   */
   const CompletedJobsPage = () => {
       navigate('/CompletedJobs');
   }
 
+   /**
+   * Navigates to the "Pending Jobs" page.
+   */
   const PendingJobs = () => {
       navigate('/PendingJobs');
   }
 
+  /**
+   * Navigates to the user's profile page.
+   */
   const profilePage = () => {
     navigate('/userProfile');
   };
 
+   /**
+   * Navigates to the job creation page.
+   */
   const createJob = () => {
     navigate('/createJob');
   };
 
+  /**
+   * Navigates to the direct messages page.
+   */
   const directMessages = () => {
     navigate('/messages');
   };

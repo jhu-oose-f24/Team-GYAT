@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom'; // For navigation
+import { useNavigate } from 'react-router-dom'; 
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -16,9 +16,18 @@ import JobContractJSON from "../contract/artifact/JobContract.json";
 import JobActionBtn from "./JobActionBtn"
 
 const API_URL = process.env.REACT_APP_API_URL;
+// API endpoint for fetching Ethereum price
 const ETH_PRICE_API = 'https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd'; 
 
-
+/**
+ * Job component: Displays job details in a card format with functionality to view more details in a modal.
+ * 
+ * Props:
+ * - jobId: ID of the job to display.
+ * - onRequest: Callback function triggered when a service request is made.
+ * - requested: Boolean indicating if the job has been requested.
+ * - refresh: Callback to refresh job data.
+ */
 const Job = ({ jobId, onRequest, requested, refresh }) => {
   const [jobData, setJobData] = React.useState({});
   const [open, setOpen] = React.useState(false);
@@ -28,9 +37,14 @@ const Job = ({ jobId, onRequest, requested, refresh }) => {
   const { userId } = useAuth(); 
   const navigate = useNavigate(); 
 
+   // Function to open the modal
   const handleOpen = () => setOpen(true);
+  // Function to close the modal
   const handleClose = () => setOpen(false);
 
+  /**
+   * Fetches the current Ethereum price using the Coingecko API.
+   */
   const fetchEthPrice = async () => {
     try {
       const response = await axios.get(ETH_PRICE_API);
@@ -38,11 +52,14 @@ const Job = ({ jobId, onRequest, requested, refresh }) => {
       setEthPrice(ethPriceData);
     } catch (error) {
       console.error("Error fetching ETH price:", error);
+      // Default fallback price in case of an error
       setEthPrice(2518);
     }
   };
 
-
+  /**
+   * Handles the creation of a conversation with the job provider.
+   */
   const handleCreateConversation = async () => {
     if (!userId) {
       alert("You must be signed in to create a conversation.");
@@ -80,6 +97,7 @@ const Job = ({ jobId, onRequest, requested, refresh }) => {
   };  
   
 
+  // Fetches job data and Ethereum price when the component mounts or jobId changes
   React.useEffect(() => {
     const fetchJobData = async () => {
       try {
@@ -93,11 +111,13 @@ const Job = ({ jobId, onRequest, requested, refresh }) => {
     fetchEthPrice(); 
   }, [jobId]);
 
+  // Handles a service request for the job
   const requestService = () => {
     handleClose();
     onRequest(jobData);
   };
 
+  // Styles for the modal
   const modalStyle = {
     position: 'absolute',
     top: '50%',

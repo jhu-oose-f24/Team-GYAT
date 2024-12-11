@@ -14,6 +14,10 @@ import { useNavigate } from "react-router-dom";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
+
+/**
+ * JobFeed Component: Displays a feed of available jobs with filtering, searching, and sorting functionalities.
+ */
 const JobFeed = () => {
   const [jobs, setJobs] = React.useState([]);
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -21,10 +25,10 @@ const JobFeed = () => {
   const [filteredJobs, setFilteredJobs] = React.useState([]);
   const [tagFilter, setTagFilter] = React.useState('');
   const [requestedJobs, setRequestedJobs] = React.useState([]);
-
   const { isSignedIn, userId } = useAuth();
   const navigate = useNavigate();
 
+    // Predefined list of job tags
   const tagList = [
     { value: 'Tutoring', label: 'Tutoring' },
     { value: 'Cleaning', label: 'Cleaning' },
@@ -33,10 +37,16 @@ const JobFeed = () => {
     { value: 'Other', label: 'Other' },
   ];
 
+   // Predefined list of filters
   const filterList = [
     { value: 'price', label: 'Price' },
     { value: 'highToLow', label: 'Price (Ascending)' }
   ];
+
+  /**
+   * Fetch jobs from the server on component mount or when userId changes.
+   * Ensures the user is signed in; otherwise, redirects to the home page.
+   */
   React.useEffect(() => {
     if (!isSignedIn) {
       navigate('/');
@@ -55,27 +65,45 @@ const JobFeed = () => {
     fetchJobs();
   }, [userId, navigate]);
 
+  /**
+   * Handles the action when a job is requested by the user.
+   * Moves the job to the requested jobs list and removes it from the main job feed.
+   * 
+   * @param {Object} job - The job object being requested.
+   */
   const handleRequestJob = (job) => {
       console.log("handling request job");
     setRequestedJobs([...requestedJobs, job]);
     setJobs(jobs.filter(j => j.job_id !== job.job_id));
   }
 
-  /*
-  Filter jobs based on the selected rp
-  */
+  /**
+   * Handles changes to the sorting filter.
+   * Updates the filter state to apply a new sorting order.
+   */
   const handleChange = (e) => {
     setFilter(e.target.value);
   }
 
+  /**
+   * Handles updates to the search query.
+   * Filters jobs based on the input search text.
+   */
   const handleSearch = (e) => {
     setSearchQuery(e);
   }
 
+  /**
+   * Handles changes to the tag filter.
+   * Filters jobs to show only those matching the selected tag.
+   */
   const handleTagChange = (e) => {
     setTagFilter(e.target.value);
   };
 
+  /**
+   * Applies filtering, sorting, and searching to the job list whenever related state changes.
+   */
   React.useEffect(() => {
     const filterJobs = () => {
       let sortedJobs = [...jobs];

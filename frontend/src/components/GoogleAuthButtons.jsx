@@ -1,12 +1,22 @@
 /* global google */
+
 import React, { useEffect } from 'react';
 import { Button } from '@mui/material';
 import { useAuth } from './AuthContext';
 
+/**
+ * GoogleAuthButtons: A component to manage Google sign-in and sign-out functionalities.
+ */
 const GoogleAuthButtons = () => {
+  // Destructuring the authentication context values
   const { isSignedIn, userName, signIn, signOut } = useAuth();
 
+   // Effect to dynamically load the Google Sign-In script and initialize the Google API
   useEffect(() => {
+    /**
+     * Dynamically loads the Google Sign-In client script into the document.
+     * @returns {HTMLScriptElement} The script element added to the document.
+     */
     const loadGoogleScript = () => {
       const script = document.createElement('script');
       script.src = 'https://accounts.google.com/gsi/client';
@@ -18,6 +28,7 @@ const GoogleAuthButtons = () => {
 
     const script = loadGoogleScript();
 
+    // Initialize the Google Sign-In client after the script loads
     script.onload = () => {
       if (window.google) {
         window.google.accounts.id.initialize({
@@ -25,6 +36,7 @@ const GoogleAuthButtons = () => {
           callback: handleCredentialResponse
         });
 
+        // Render the Google Sign-In button if the user is not signed in
         if (!isSignedIn) {
           window.google.accounts.id.renderButton(
             document.getElementById('google-signin-button'),
@@ -47,10 +59,17 @@ const GoogleAuthButtons = () => {
     };
   }, [isSignedIn]);
 
+   /**
+   * Handles the credential response from Google Sign-In.
+   * @param {Object} response - The response object from Google Sign-In.
+   */
   const handleCredentialResponse = (response) => {
     signIn(response.credential);
   };
 
+  /**
+   * Handles the Google Sign-Out process.
+   */
   const handleSignOut = () => {
     if (window.google?.accounts?.id) {
       google.accounts.id.disableAutoSelect();
