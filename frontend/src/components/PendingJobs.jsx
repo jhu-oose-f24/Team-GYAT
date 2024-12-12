@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from './AuthContext';
 import Job from './Job';
 import axios from 'axios';
-
 import { Select, 
          MenuItem, 
          FormControl, 
@@ -15,13 +14,18 @@ import { Select,
 
 const API_URL = process.env.REACT_APP_API_URL;
 
+/**
+ * PendingJobs Component: Displays lists of jobs grouped by their status for the authenticated user.
+ */
 const PendingJobs = () => {
     const { userId } = useAuth();
+    // State to store jobs provided by the user, categorized by status
     const [providingJobs, setProvidingJobs] = useState({
         open: [],
         awaitingCompletion: [],
         awaitingApproval: []
     });
+     // State to store jobs requested by the user, categorized by status
     const [requestedJobs, setRequestedJobs] = useState({
         awaitingCompletion: [],
         awaitingApproval: []
@@ -29,10 +33,14 @@ const PendingJobs = () => {
 
     const navigate = useNavigate();
 
+     /**
+     * Fetches all jobs and categorizes them based on their status and user roles (provider/requester).
+     */
     const fetchJobs = async () => {
         const response = await axios.get(`${API_URL}/jobs`);
         const jobs = response.data;
 
+        // Categorize jobs provided by the user
         const providingOpen = 
             jobs.filter(job => job.provider_id === userId && job.status === 'open');
         const providingAwaitingCompletion = 
@@ -40,11 +48,13 @@ const PendingJobs = () => {
         const providingAwaitingApproval = 
             jobs.filter(job => job.provider_id === userId && job.status === 'provider_done');
 
+        // Categorize jobs requested by the user
         const requestedAwaitingCompletion = 
             jobs.filter(job => job.requester_id === userId && job.status === 'accepted');
         const requestedAwaitingApproval = 
             jobs.filter(job => job.requester_id === userId && job.status === 'provider_done');
 
+        // Update state with categorized jobs
         setProvidingJobs({
             open: providingOpen,
             awaitingCompletion: providingAwaitingCompletion,
@@ -58,7 +68,9 @@ const PendingJobs = () => {
 
     const [refreshKey, setRefreshKey] = useState(0);
 
-
+    /**
+     * Fetch jobs when the component mounts or when `refreshKey` changes.
+     */
     useEffect(() => {
         if (!userId) {
             navigate('/');

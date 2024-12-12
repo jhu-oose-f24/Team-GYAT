@@ -3,9 +3,10 @@ from flask import Blueprint, request, jsonify
 from models import db
 from models.User import User
 
-
+# Define a Blueprint for user-related routes
 user_bp = Blueprint('user_bp', __name__)
 
+# Route for user login or account creation
 @user_bp.route('/users/login', methods=['POST'])
 def user_login():
     data = request.get_json()
@@ -14,14 +15,14 @@ def user_login():
         user_id = str(data['user_id'])
         user = User.query.get(user_id)
         if user:
-            print("User found:", user.user_id)
+            # Update existing user's details
             user.username = data.get('username', user.username)
             user.fullname = data.get('fullname', user.fullname)
             user.email = data.get('email', user.email)
             user.year = 'None'
             user.password = 'None'
         else:
-            print("User not found. Creating new user.")
+            # Create a new user if not found
             user = User(
                 user_id=user_id,
                 username=data['username'],
@@ -37,6 +38,7 @@ def user_login():
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
+# Old Route for creating a new user
 @user_bp.route('/users', methods=['POST'])
 def create_user():
     data = request.get_json()
@@ -54,21 +56,21 @@ def create_user():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-
+# Route to get details of multiple users
 @user_bp.route('/users/details', methods=['POST'])
 def get_user_details():
     user_ids = request.json.get('user_ids', [])
     users = User.query.filter(User.user_id.in_(user_ids)).all()
     return jsonify({user.user_id: user.fullname for user in users})  # Use 'fullname' instead of 'full_name'
 
-#get all users
+# Route to get all users
 @user_bp.route('/users', methods=['GET'])
 def get_users():
     users = User.query.all()
     result = [{'user_id': user.user_id, 'username': user.username, 'fullname':user.fullname, 'year':user.year, 'email': user.email} for user in users]
     return jsonify(result)
 
-#ger single user by userid
+# Route to get a single user by their ID
 @user_bp.route('/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
     user = User.query.get(user_id)
@@ -77,7 +79,7 @@ def get_user(user_id):
     user_data = {'user_id': user.user_id, 'username': user.username, 'fullname':user.fullname, 'year':user.year, 'email': user.email}
     return jsonify(user_data)
 
-# update user profile
+# Route to update a user's profile
 @user_bp.route('/users/<int:user_id>', methods=['PUT'])
 def update_user(user_id):
     user = User.query.get(user_id)
@@ -107,7 +109,7 @@ def update_user(user_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-#delete user by user id
+# Route to delete a user by their ID
 @user_bp.route('/users/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
     user = User.query.get(user_id)
@@ -121,10 +123,12 @@ def delete_user(user_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
+# Utility function to validate email format
 def is_valid_email(potential_email) -> bool:
     email_regex = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
     return re.match(email_regex, potential_email) is not None
 
+# Old Utility function to validate year format
 def is_valid_year(year):
     # Check if the year is a 4-digit string and starts with '20'
     return bool(re.match(r'^20\d{2}$', year))

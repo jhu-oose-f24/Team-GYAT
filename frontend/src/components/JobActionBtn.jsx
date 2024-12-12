@@ -5,8 +5,23 @@ import JobContractJSON from "../contract/artifact/JobContract.json";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
+/**
+ * JobActionBtn Component: Displays and manages actions for a job based on its status and user role.
+ * 
+ * Props:
+ * - jobData: Object containing job details (e.g., status, provider_id, smart_contract_address).
+ * - userId: ID of the current user.
+ * - walletAddress: Ethereum wallet address of the current user.
+ * - handleClose: Callback function to close any related UI components.
+ * - requestService: Callback function to handle service requests.
+ * - refresh: Callback function to refresh job data.
+ */
 const JobActionBtn = ({ jobData, userId, walletAddress, handleClose, requestService, refresh }) => {
 
+    /**
+     * Handles the request service action for a job.
+     * Interacts with the smart contract to accept the job and updates the backend status.
+     */
     const handleRequestService = async () => {
         try {
             const JobContractABI = JobContractJSON.abi;
@@ -28,6 +43,7 @@ const JobActionBtn = ({ jobData, userId, walletAddress, handleClose, requestServ
             const provider_address = await contract.provider();
             const job_price = await contract.price();
 
+            // Ensure provider and requester wallet addresses are different
             if (provider_address.toLowerCase() === walletAddress.toLowerCase()) {
                 alert("Provider and Requester wallet addresses must be different!");
                 throw new Error("Same Provider/Requester address");
@@ -58,6 +74,10 @@ const JobActionBtn = ({ jobData, userId, walletAddress, handleClose, requestServ
         }
     };
 
+    /**
+     * Handles the action to mark a job as completed by the provider.
+     * Interacts with the smart contract to signal completion and updates the backend status.
+     */
     const handleCompleteJob = async () => {
         try {
             const JobContractABI = JobContractJSON.abi;
@@ -78,6 +98,7 @@ const JobActionBtn = ({ jobData, userId, walletAddress, handleClose, requestServ
 
             const contract_provider_address = await contract.provider();
 
+            // Ensure the provider's wallet address matches the contract's provider address
             if (walletAddress.toLowerCase() !== contract_provider_address.toLowerCase()) {
                 alert("Provider must use the same wallet address as when contract was created!");
                 throw new Error("Provider address mismatch");
@@ -105,6 +126,10 @@ const JobActionBtn = ({ jobData, userId, walletAddress, handleClose, requestServ
         }
     };
     
+    /**
+     * Handles the action to approve job completion by the requester.
+     * Interacts with the smart contract to confirm completion and updates the backend status.
+     */
     const handleApproveCompletion = async () => {
         try {
             const JobContractABI = JobContractJSON.abi;
@@ -125,6 +150,7 @@ const JobActionBtn = ({ jobData, userId, walletAddress, handleClose, requestServ
 
             const contract_requester_address = await contract.requester();
 
+            // Ensure the requester's wallet address matches the contract's requester address
             if (walletAddress.toLowerCase() !== contract_requester_address.toLowerCase()) {
                 alert("Requester must use the same wallet address as when job requested!");
                 throw new Error("Requester address mismatch");

@@ -16,6 +16,10 @@ import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
+/**
+ * Messages Component: Displays a list of conversations and allows users to send and view messages
+ * within a selected conversation.
+ */
 const Messages = () => {
   const { userId, isSignedIn } = useAuth();
   const [searchParams] = useSearchParams(); // Access query parameters
@@ -27,6 +31,9 @@ const Messages = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  /**
+   * Fetches user's conversations and messages (if a `conversationId` is provided).
+   */
   useEffect(() => {
     if (!userId || !isSignedIn) return;
 
@@ -74,6 +81,10 @@ const Messages = () => {
     fetchUserAndConversations();
   }, [userId, isSignedIn, conversationId]);
 
+  /**
+   * Fetches messages for a selected conversation.
+   * @param {Object} conversation - The selected conversation object
+   */
   const fetchMessages = async (conversation) => {
     try {
       setIsLoading(true);
@@ -92,11 +103,19 @@ const Messages = () => {
     }
   };
 
+  /**
+   * Handles selection of a conversation.
+   * @param {Object} conversation - The conversation to select
+   */
   const handleConversationClick = (conversation) => {
     setSelectedConversation(conversation);
     fetchMessages(conversation);
   };
 
+  /**
+   * Sends a message to the selected conversation when Enter is pressed.
+   * @param {Object} event - The keyboard event
+   */
   const handleKeyDown = (event) => {
     if (event.key === 'Enter' && !isSubmitting) {
       event.preventDefault();
@@ -104,6 +123,9 @@ const Messages = () => {
     }
   };
 
+  /**
+   * Sends the current message to the server.
+   */
   const handleSendMessage = async () => {
     if (!messageText.trim()) return;
 
@@ -123,6 +145,7 @@ const Messages = () => {
     }
   };
 
+   // Show loading spinner while data is being fetched
   if (isLoading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>

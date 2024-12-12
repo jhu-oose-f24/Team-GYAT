@@ -12,10 +12,13 @@ import { useWallet } from "./WalletContext";
 
 const API_URL = process.env.REACT_APP_API_URL;
 
+/**
+ * CreateJob: A component for creating a new job listing, including metadata and a smart contract.
+ */
 function CreateJob() {
     const [jobTitle, setJobTitle] = useState('');
     const [jobDescription, setJobDescription] = useState('');
-    const [jobPhoto, setJobPhoto] = useState(null); // File object
+    const [jobPhoto, setJobPhoto] = useState(null); 
     const [jobPrice, setJobPrice] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [jobTag, setJobTag] = useState('');
@@ -25,11 +28,12 @@ function CreateJob() {
     const { isSignedIn, userId } = useAuth();
     const navigate = useNavigate();
 
+     // Fetch available tags and ensure the user is signed in
     useEffect(() => {
+        // Redirect to the home page if not signed in
         if (!isSignedIn) {
             navigate("/");
         }
-        // Fetch available tags when component mounts
         const fetchTags = async () => {
             try {
                 const response = await fetch(`${API_URL}/tags`);
@@ -43,9 +47,14 @@ function CreateJob() {
         fetchTags();
     }, [isSignedIn, navigate]);
 
+    // Smart contract ABI and bytecode for job listings
     const JobContractABI = JobContractJSON.abi;
     const JobContractBytecode = JobContractJSON.data.bytecode?.object;
 
+    /**
+     * handleSubmit: Handles the submission of the job creation form, including smart contract deployment.
+     * @param {Event} event - The form submission event.
+     */
     const handleSubmit = async (event) => {
         event.preventDefault();
         setIsSubmitting(true);
@@ -59,8 +68,7 @@ function CreateJob() {
         formData.append('provider_id', userId); 
         formData.append('tag_name', jobTag);
 
-
-        // limit max price to 100 ETH for now
+        // Validate job price (positive and less than or equal to 100 ETH)
         const priceValue = parseFloat(jobPrice);
         if (isNaN(priceValue) || priceValue <= 0 || priceValue > 100) {
             alert("Price must be positive and less than or equal to 100 ETH");
@@ -74,7 +82,7 @@ function CreateJob() {
         }
 
         try {
-            // deploy contract to blockchain
+            // Deploy the job contract to the blockchain
             if (!walletAddress) {
                 alert("Please connect ETH wallet to create job.");
                 throw new Error("Wallet not connected.");
@@ -92,6 +100,7 @@ function CreateJob() {
             );
             await contract.waitForDeployment();
 
+             // Append the smart contract address to the form data
             formData.append("smart_contract_address", contract.target);
 
             const response = await fetch(`${API_URL}/jobs`, {
@@ -121,6 +130,10 @@ function CreateJob() {
         }
     };
 
+    /**
+     * handleFileChange: Updates the job photo state with the selected file.
+     * @param {Event} e - The file input change event.
+     */
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         setJobPhoto(file); // Store the file object

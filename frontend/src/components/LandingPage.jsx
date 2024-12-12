@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import GoogleAuthButtons from './GoogleAuthButtons';
 import NavBar from './NavBar';
-
 import {
       Typography,
       Box,
@@ -12,10 +11,17 @@ import {
       Grid,
 } from '@mui/material';
 
+/**
+ * LandingPage Component: The main entry page for users visiting the JHU Marketplace.
+ * Redirects signed-in users to the Job Feed page and provides information and sign-in options for others.
+ */
 function LandingPage() {
     const { isSignedIn } = useAuth();
     const navigate = useNavigate();
 
+    /**
+   * Redirect signed-in users directly to the Job Feed page.
+   */
     useEffect(() => {
         if (isSignedIn) {
             navigate('/jobFeed');
