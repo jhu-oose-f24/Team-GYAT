@@ -18,9 +18,10 @@ Pytest or Unittest for testing Flask API routes and database interactions.
 Jest and React Testing Library for testing React components.
 
 ## Naming
-
+Naming is overall a pretty strong aspect in our codebase. On the backend, variable, method, and class names are all clear and are highly correlated to what that specific data type does. Across the APIs, even with different people working on separate endpoints, naming conventions are relatively consistent and meaningful. This is the same on the other side of the stack, the front end. Our components are clearly named with the part of the website they represent. For example, NavBar, SearchBar, PendingJobs, and GoogleAuthButtons are self-explanatory names, making components inserted highly readable and easier to understand. Specifically on the frontend, our team stuck to general best practice guidelines for state management. handleConnect() in NavBar, handleSubmit() and handleFileChange() in CreateJob. Overall, even with a team of 6 people. we were able to have meaningful and relatively consistent variable, method, component, and class methods.
 
 ## Comments
+Comments were probably not a strong suit in our codebase for the majority of the semester. However, as we iteratively refined our functionality and codebase, the comments started to become more insightful and impactful. We give Thomas gets a lot of credit for this as he went through the frontend components and backend structure and created clear, concise comments. With descriptions not only of the functionality of a method but also of what the parameters mean, our codebase can now be understood much faster. One of, if not the most important parts of good commenting is keeping them concise. Lengthy comments are counter-productive as they just lack clarity as they are filled with fluff. We think the strongest part of our commenting lies in their conciseness. It is hard to write concise comments that clearly convey the main aspect of the portion of the code it is describing, but by being diligent with this, we greatly have increased the readability and how easy it is for outsiders to understand our codebase.
 
 ## Style
 
