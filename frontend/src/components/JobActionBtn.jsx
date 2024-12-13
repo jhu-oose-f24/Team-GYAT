@@ -180,8 +180,10 @@ const JobActionBtn = ({ jobData, userId, walletAddress, handleClose, requestServ
                         body: ratingFormData
                     });
 
-                    if (!ratingResponse.ok) {
-                        console.error("Error submitting rating");
+                    if (ratingResponse.ok) {
+                        console.log("Rating submitted successfully");
+                    } else {
+                        console.error("Error submitting rating", ratingResponse);
                     }
                 } else {
                     console.log("No valid rating given or user canceled.");
