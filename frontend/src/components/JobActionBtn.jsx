@@ -168,7 +168,26 @@ const JobActionBtn = ({ jobData, userId, walletAddress, handleClose, requestServ
             });
 
             if (response.ok) {
-                refresh(prev => prev+1);
+                const rating = window.prompt("rate this job： bad / normal / good", "normal");
+
+                const validRatings = ["bad", "normal", "good"];
+                if (rating && validRatings.includes(rating.trim())) {
+                    const ratingFormData = new FormData();
+                    ratingFormData.append("rating", rating.trim());
+
+                    const ratingResponse = await fetch(`${API_URL}/jobs/${jobId}/rating`, {
+                        method: "POST",
+                        body: ratingFormData
+                    });
+
+                    if (!ratingResponse.ok) {
+                        console.error("Error submitting rating");
+                    }
+                } else {
+                    console.log("No valid rating given or user canceled.");
+                }
+
+                refresh(prev => prev + 1);
                 handleClose();
             } else {
                 console.error("Error approving job completion", response);
