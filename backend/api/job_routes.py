@@ -211,3 +211,18 @@ def get_tags():
     tags = Tag.query.all()
     result = [{'tag_id': tag.tag_id, 'tag_name': tag.tag_name} for tag in tags]
     return jsonify(result)
+
+@job_bp.route('/jobs/<int:job_id>/rating', methods=['POST'])
+def add_job_rating(job_id):
+    job = Job.query.get(job_id)
+    if not job:
+        return jsonify({'error': 'Job not found'}), 404
+
+    rating = request.form.get('rating')
+    valid_ratings = ["bad", "normal", "good"]
+    if rating not in valid_ratings:
+        return jsonify({"error": "Invalid rating value. Must be one of 'bad', 'normal', 'good'."}), 400
+    job.rating = rating
+    db.session.commit()
+
+    return jsonify({"message": "Rating submitted successfully", "job_id": job_id, "rating": rating}), 200
